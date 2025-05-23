@@ -1,7 +1,7 @@
 /* SPDX-License-Identifier: LGPL-2.1-or-later */
 #pragma once
 
-#include "assert-fundamental.h"
+#include "assert-fundamental.h"         /* IWYU pragma: keep */
 #include "macro-fundamental.h"
 
 /* struct iovec is a POSIX userspace construct. Let's introduce it also in EFI mode, it's just so useful */

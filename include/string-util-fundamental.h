@@ -4,7 +4,7 @@
 #include "efi.h"
 #include "efi-string.h"
 
-#include "assert-fundamental.h"
+#include "assert-fundamental.h"         /* IWYU pragma: keep */
 #include "macro-fundamental.h"
 
 /* What is interpreted as whitespace? */
