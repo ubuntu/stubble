@@ -46,7 +46,7 @@ EFI_STATUS linux_exec(
          * the firmware could cast EFI_LOADED_IMAGE_PROTOCOL * to a larger struct to access its own private data,
          * and if we allocated a smaller struct, that could cause problems.
          * This is modeled exactly after GRUB behaviour, which has proven to be functional. */
-        EFI_LOADED_IMAGE_PROTOCOL* parent_loaded_image;
+        EFI_LOADED_IMAGE_PROTOCOL *parent_loaded_image;
         err = BS->HandleProtocol(
                         parent_image, MAKE_GUID_PTR(EFI_LOADED_IMAGE_PROTOCOL), (void **) &parent_loaded_image);
         if (err != EFI_SUCCESS)
