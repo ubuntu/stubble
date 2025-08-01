@@ -16,7 +16,7 @@ Multi-Arch: foreign
 Depends: ${misc:Depends}, ${shlibs:Depends}
 Priority: important
 Suggests: systemd-ukify
-Description: A device tree loading UEFI kernel boot stub
+Description: UEFI kernel stub with device-tree loading capability
  Small Linux kernel EFI boot stub bundling device trees, a CHID database
  and the kernel. The stub finds a matching device tree based on CHIDs
  generated from SMBIOS and loads it before executing the embedded kernel.
