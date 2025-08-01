@@ -1,5 +1,5 @@
 ubustub (1-1) questing; urgency=medium
 
-  * Initial release. (Closes: #2119319)
+  * Initial release. (LP: #2119319)
 
  -- Tobias Heider <tobias.heider@canonical.com>  Fri, 01 Aug 2025 17:22:51 +0200
