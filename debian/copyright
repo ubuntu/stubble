@@ -1,0 +1,45 @@
+Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
+Upstream-Name: ubustub
+Source: https://github.com/canonical/ubustub
+
+Files: hwids/hwid2json.py
+Copyright: 2024,2025 anonymix007
+License: 0BSD
+ Permission to use, copy, modify, and/or distribute this software for
+ any purpose with or without fee is hereby granted.
+ .
+ THE SOFTWARE IS PROVIDED “AS IS” AND THE AUTHOR DISCLAIMS ALL
+ WARRANTIES WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES
+ OF MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE
+ FOR ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY
+ DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN
+ AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT
+ OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+
+Files: *
+Copyright: 2017 Max Resch <resch.max@gmail.com>
+           2012 <James.Bottomley@HansenPartnership.com>
+           2007-2022 Free Software Foundation, Inc.
+           2024 Nikita Travkin <nikita@trvn.ru>
+           2019, Linaro. All rights reserved.
+           1991, 1999 Free Software Foundation, Inc.
+           2017 Max Resch <resch.max@gmail.com>
+           2012 <James.Bottomley@HansenPartnership.com>
+           2025 Canonical Ltd.
+License: LGPL-2.1+
+ This program is free software; you can redistribute it and/or modify
+ it under the terms of the GNU Lesser General Public License as published by
+ the Free Software Foundation; either version 2.1, or (at your option)
+ any later version.
+ .
+ This program is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU Lesser General Public License for more details.
+ .
+ You should have received a copy of the GNU Lesser General Public License along
+ with this program; if not, write to the Free Software Foundation,
+ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ .
+ On Debian systems, the complete text of the GNU Lesser General Public
+ License version 2.1 can be found in ‘/usr/share/common-licenses/LGPL-2.1’.

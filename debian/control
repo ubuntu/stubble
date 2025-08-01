@@ -1,0 +1,22 @@
+Source: ubustub
+Section: admin
+Priority: optional
+Maintainer: Ubuntu Developers <ubuntu-devel-discuss@lists.ubuntu.com>
+Standards-Version: 4.7.2
+Rules-Requires-Root: no
+Vcs-Git: https://github.com/canonical/ubustub
+Vcs-Browser: https://github.com/canonical/ubustub.git
+Homepage: https://github.com/canonical/ubustub
+Build-Depends: debhelper-compat (=13),
+               python3-pyelftools
+
+Package: ubustub
+Architecture: any
+Multi-Arch: foreign
+Depends: ${misc:Depends}, ${shlibs:Depends}
+Priority: important
+Suggests: systemd-ukify
+Description: A device tree loading UEFI kernel boot stub
+ Small Linux kernel EFI boot stub bundling device trees, a CHID database
+ and the kernel. The stub finds a matching device tree based on CHIDs
+ generated from SMBIOS and loads it before executing the embedded kernel.
