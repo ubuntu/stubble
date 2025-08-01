@@ -1,5 +1,5 @@
-ubustub (1-1~ppa0) UNRELEASED; urgency=medium
+ubustub (1-1) questing; urgency=medium
 
-  * Initial release. (Closes: #XXXXXX)
+  * Initial release. (Closes: #2119319)
 
- -- Tobias Heider <tobias.heider@canonical.com>  Mon, 28 Jul 2025 16:31:38 +0200
+ -- Tobias Heider <tobias.heider@canonical.com>  Fri, 01 Aug 2025 17:22:51 +0200
