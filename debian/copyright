@@ -13,22 +13,10 @@ Copyright: 2017 Max Resch <resch.max@gmail.com>
            2012 <James.Bottomley@HansenPartnership.com>
            2025 Canonical Ltd.
 License: LGPL-2.1+
- This program is free software; you can redistribute it and/or modify
- it under the terms of the GNU Lesser General Public License as published by
- the Free Software Foundation; either version 2.1, or (at your option)
- any later version.
- .
- This program is distributed in the hope that it will be useful,
- but WITHOUT ANY WARRANTY; without even the implied warranty of
- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- GNU Lesser General Public License for more details.
- .
- You should have received a copy of the GNU Lesser General Public License along
- with this program; if not, write to the Free Software Foundation,
- Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- .
- On Debian systems, the complete text of the GNU Lesser General Public
- License version 2.1 can be found in ‘/usr/share/common-licenses/LGPL-2.1’.
+
+Files: debian/*
+Copyright: 2025 Canonical Ltd.
+License: LGPL-2.1+
 
 Files: hwids/hwid2json.py
 Copyright: 2024,2025 anonymix007
@@ -77,3 +65,21 @@ Files: include/sha1.h
 Copyright: n/a
 License: public-domain
  These files are in the public domain.
+
+License: LGPL-2.1+
+ This program is free software; you can redistribute it and/or modify
+ it under the terms of the GNU Lesser General Public License as published by
+ the Free Software Foundation; either version 2.1, or (at your option)
+ any later version.
+ .
+ This program is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU Lesser General Public License for more details.
+ .
+ You should have received a copy of the GNU Lesser General Public License along
+ with this program; if not, write to the Free Software Foundation,
+ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ .
+ On Debian systems, the complete text of the GNU Lesser General Public
+ License version 2.1 can be found in ‘/usr/share/common-licenses/LGPL-2.1’.
