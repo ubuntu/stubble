@@ -1,3 +1,10 @@
+ubustub (1-2) questing; urgency=medium
+
+  * d/control: limit to amd64 and arm64 for now
+  * d/copyright: separate entry for debian/* as requested by review
+
+ -- Tobias Heider <tobias.heider@canonical.com>  Mon, 04 Aug 2025 14:39:15 +0200
+
 ubustub (1-1) questing; urgency=medium
 
   * Initial release. (LP: #2119319)
