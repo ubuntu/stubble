@@ -11,7 +11,7 @@ Build-Depends: debhelper-compat (=13),
                python3-pyelftools
 
 Package: ubustub
-Architecture: any
+Architecture: amd64 arm64
 Multi-Arch: foreign
 Depends: ${misc:Depends}, ${shlibs:Depends}
 Priority: important
