@@ -14,7 +14,6 @@
 #include "pe.h"
 #include "proto/device-path.h"
 #include "proto/loaded-image.h"
-#include "shim.h"
 #include "util.h"
 
 typedef struct {

@@ -76,8 +76,6 @@ Still 100% public domain
 modified for use with systemd
 */
 
-#include "efi-string.h"
-
 #include "memory-util-fundamental.h"
 #include "sha1.h"
 

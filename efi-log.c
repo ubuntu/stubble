@@ -1,8 +1,6 @@
 /* SPDX-License-Identifier: LGPL-2.1-or-later */
 
 #include "efi-log.h"
-#include "proto/rng.h"
-#include "util.h"
 
 static unsigned log_count = 0;
 bool log_isdebug = false;
