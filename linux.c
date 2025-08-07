@@ -8,7 +8,6 @@
  * This method works for Linux 5.8 and newer on ARM/Aarch64, x86/x68_64 and RISC-V.
  */
 
-#include "device-path-util.h"
 #include "efi-log.h"
 #include "initrd.h"
 #include "linux.h"
@@ -92,8 +91,8 @@ EFI_STATUS linux_exec(
         kernel_file_path->memmap_path.Header.SubType = HW_MEMMAP_DP;
         kernel_file_path->memmap_path.Header.Length = sizeof (MEMMAP_DEVICE_PATH);
         kernel_file_path->memmap_path.MemoryType = EfiLoaderData;
-        kernel_file_path->memmap_path.StartingAddress = (EFI_PHYSICAL_ADDRESS) kernel->iov_base;
-        kernel_file_path->memmap_path.EndingAddress = (EFI_PHYSICAL_ADDRESS) kernel->iov_base + kernel->iov_len;
+        kernel_file_path->memmap_path.StartingAddress = POINTER_TO_PHYSICAL_ADDRESS(kernel->iov_base);
+        kernel_file_path->memmap_path.EndingAddress = POINTER_TO_PHYSICAL_ADDRESS(kernel->iov_base) + kernel->iov_len;
 
         kernel_file_path->end_path.Type = END_DEVICE_PATH_TYPE;
         kernel_file_path->end_path.SubType = END_ENTIRE_DEVICE_PATH_SUBTYPE;

@@ -60,8 +60,6 @@ static inline void* xmemdup(const void *p, size_t l) {
 #define xnew(type, n) ((type *) xmalloc_multiply((n), sizeof(type)))
 #define xnew0(type, n) ((type *) xcalloc_multiply((n), sizeof(type)))
 
-bool free_and_xstrdup16(char16_t **p, const char16_t *s);
-
 typedef struct {
         EFI_PHYSICAL_ADDRESS addr;
         size_t n_pages;
@@ -88,80 +86,12 @@ static inline Pages xmalloc_pages(
         };
 }
 
-static inline Pages xmalloc_initrd_pages(size_t n_pages) {
-        /* The original native x86 boot protocol of the Linux kernel was not 64bit safe, hence we try to
-         * allocate memory for the initrds below the 4G boundary on x86, since we don't know early enough
-         * which protocol we'll use to ultimately boot the kernel. This restriction is somewhat obsolete,
-         * since these days we generally prefer the kernel's newer EFI entrypoint instead, which has no such
-         * limitations. There's a good chance that for large allocations we won't be successful, hence
-         * immediately fallback to an unrestricted allocation. On other architectures we do not bother with
-         * any restriction on this, in particular as some of them don't even have RAM mapped to such low
-         * addresses. */
-
-#if defined(__i386__) || defined(__x86_64__)
-        EFI_PHYSICAL_ADDRESS addr = UINT32_MAX; /* Below 4G boundary. */
-        if (BS->AllocatePages(
-                        AllocateMaxAddress,
-                        EfiLoaderData,
-                        EFI_SIZE_TO_PAGES(n_pages),
-                        &addr) == EFI_SUCCESS)
-                return (Pages) {
-                        .addr = addr,
-                        .n_pages = EFI_SIZE_TO_PAGES(n_pages),
-                };
-#endif
-        return xmalloc_pages(
-                        AllocateAnyPages,
-                        EfiLoaderData,
-                        EFI_SIZE_TO_PAGES(n_pages),
-                        0 /* Ignored. */);
-}
-
-void convert_efi_path(char16_t *path);
-char16_t *xstr8_to_path(const char *stra);
 char16_t *mangle_stub_cmdline(char16_t *cmdline);
-
-EFI_STATUS chunked_read(EFI_FILE *file, size_t *size, void *buf);
-EFI_STATUS file_read(EFI_FILE *dir, const char16_t *name, uint64_t offset, size_t size, char **content, size_t *content_size);
-EFI_STATUS file_handle_read(EFI_FILE *handle, uint64_t offset, size_t size, char **ret, size_t *ret_size);
-
-static inline void file_closep(EFI_FILE **handle) {
-        if (!*handle)
-                return;
-
-        (*handle)->Close(*handle);
-}
-
-#define _cleanup_file_close_ _cleanup_(file_closep)
-
-static inline void unload_imagep(EFI_HANDLE *image) {
-        if (*image)
-                (void) BS->UnloadImage(*image);
-}
 
 /* Note that GUID is evaluated multiple times! */
 #define GUID_FORMAT_STR "%08X-%04X-%04X-%02X%02X-%02X%02X%02X%02X%02X%02X"
 #define GUID_FORMAT_VAL(g) (g).Data1, (g).Data2, (g).Data3, (g).Data4[0], (g).Data4[1], \
         (g).Data4[2], (g).Data4[3], (g).Data4[4], (g).Data4[5], (g).Data4[6], (g).Data4[7]
-
-void print_at(size_t x, size_t y, size_t attr, const char16_t *str);
-void clear_screen(size_t attr);
-
-typedef int (*compare_pointer_func_t)(const void *a, const void *b);
-void sort_pointer_array(void **array, size_t n_members, compare_pointer_func_t compare);
-
-EFI_STATUS get_file_info(EFI_FILE *handle, EFI_FILE_INFO **ret, size_t *ret_size);
-EFI_STATUS readdir(EFI_FILE *handle, EFI_FILE_INFO **buffer, size_t *buffer_size);
-
-bool is_ascii(const char16_t *f);
-
-char16_t **strv_free(char16_t **l);
-
-DEFINE_TRIVIAL_CLEANUP_FUNC(char16_t**, strv_free);
-
-#define _cleanup_strv_free_ _cleanup_(strv_freep)
-
-EFI_STATUS open_directory(EFI_FILE *root_dir, const char16_t *path, EFI_FILE **ret);
 
 /* Conversion between EFI_PHYSICAL_ADDRESS and pointers is not obvious. The former is always 64-bit, even on
  * 32-bit archs. And gcc complains if we cast a pointer to an integer of a different size. Hence let's do the
@@ -209,21 +139,11 @@ void notify_debugger(const char *identity, bool wait);
                 return err;                                                            \
         }
 
-#if defined(__i386__) || defined(__x86_64__)
-void beep(unsigned beep_count);
-#else
-static inline void beep(unsigned beep_count) {}
-#endif
-
-EFI_STATUS open_volume(EFI_HANDLE device, EFI_FILE **ret_file);
-
 static inline bool efi_guid_equal(const EFI_GUID *a, const EFI_GUID *b) {
         return memcmp(a, b, sizeof(EFI_GUID)) == 0;
 }
 
 void *find_configuration_table(const EFI_GUID *guid);
-
-char16_t *get_extra_dir(const EFI_DEVICE_PATH *file_path);
 
 #if __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__
 #  define be16toh(x) __builtin_bswap16(x)
@@ -236,5 +156,3 @@ char16_t *get_extra_dir(const EFI_DEVICE_PATH *file_path);
 
 #define bswap_16(x) __builtin_bswap16(x)
 #define bswap_32(x) __builtin_bswap32(x)
-
-char16_t *url_replace_last_component(const char16_t *url, const char16_t *filename);
