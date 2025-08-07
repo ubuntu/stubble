@@ -14,7 +14,6 @@
 #include "proto/shell-parameters.h"
 #include "random-seed.h"
 #include "sbat.h"
-#include "secure-boot.h"
 #include "shim.h"
 #include "smbios.h"
 #include "tpm2-pcr.h"

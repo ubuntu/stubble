@@ -5,7 +5,6 @@
 #include "memory-util-fundamental.h"
 #include "proto/rng.h"
 #include "random-seed.h"
-#include "secure-boot.h"
 #include "sha256.h"
 #include "util.h"
 
@@ -168,11 +167,6 @@ EFI_STATUS process_random_seed(EFI_FILE *root_dir) {
         err = acquire_rng(random_bytes, sizeof(random_bytes));
         if (err != EFI_SUCCESS) {
                 size = 0;
-                /* If we can't get any randomness from EFI itself, then we'll only be relying on what's in
-                 * ESP. But ESP is mutable, so if secure boot is enabled, we probably shouldn't trust that
-                 * alone, in which case we bail out early. */
-                if (!seeded_by_efi && secure_boot_enabled())
-                        return EFI_NOT_FOUND;
         } else {
                 seeded_by_efi = true;
                 size = sizeof(random_bytes);
