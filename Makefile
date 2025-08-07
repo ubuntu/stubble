@@ -14,7 +14,7 @@ ifeq ($(ARCH),aarch64)
 endif
 
 OBJS = devicetree.o efi-log.o efi-string.o linux.o stub.o util.o uki.o smbios.o initrd.o pe.o \
-	chid.o edid.o sha1.o
+	chid.o edid.o sha1.o measure.o
 
 .PHONY: all clean install
 
