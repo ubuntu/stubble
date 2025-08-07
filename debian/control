@@ -14,7 +14,6 @@ Package: ubustub
 Architecture: amd64 arm64
 Multi-Arch: foreign
 Depends: ${misc:Depends}, ${shlibs:Depends}
-Priority: important
 Suggests: systemd-ukify
 Description: UEFI kernel stub with device-tree loading capability
  Small Linux kernel EFI boot stub bundling device trees, a CHID database
