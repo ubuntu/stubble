@@ -48,10 +48,10 @@ typedef struct {
 } _packed_ VENDOR_DEVICE_PATH;
 
 typedef struct {
-  EFI_DEVICE_PATH Header;
-  uint32_t MemoryType;
-  EFI_PHYSICAL_ADDRESS StartingAddress;
-  EFI_PHYSICAL_ADDRESS EndingAddress;
+        EFI_DEVICE_PATH Header;
+        uint32_t MemoryType;
+        EFI_PHYSICAL_ADDRESS StartingAddress;
+        EFI_PHYSICAL_ADDRESS EndingAddress;
 } _packed_ MEMMAP_DEVICE_PATH;
 
 #define MBR_TYPE_PCAT                        0x01U

@@ -87,16 +87,23 @@ EFI_STATUS linux_exec(
 
         _cleanup_free_ KERNEL_FILE_PATH *kernel_file_path = xnew(KERNEL_FILE_PATH, 1);
 
-        kernel_file_path->memmap_path.Header.Type = HARDWARE_DEVICE_PATH;
-        kernel_file_path->memmap_path.Header.SubType = HW_MEMMAP_DP;
-        kernel_file_path->memmap_path.Header.Length = sizeof (MEMMAP_DEVICE_PATH);
-        kernel_file_path->memmap_path.MemoryType = EfiLoaderData;
-        kernel_file_path->memmap_path.StartingAddress = POINTER_TO_PHYSICAL_ADDRESS(kernel->iov_base);
-        kernel_file_path->memmap_path.EndingAddress = POINTER_TO_PHYSICAL_ADDRESS(kernel->iov_base) + kernel->iov_len;
-
-        kernel_file_path->end_path.Type = END_DEVICE_PATH_TYPE;
-        kernel_file_path->end_path.SubType = END_ENTIRE_DEVICE_PATH_SUBTYPE;
-        kernel_file_path->end_path.Length = sizeof (EFI_DEVICE_PATH);
+        *kernel_file_path = (KERNEL_FILE_PATH) {
+                .memmap_path = {
+                        .Header = {
+                                .Type = HARDWARE_DEVICE_PATH,
+                                .SubType = HW_MEMMAP_DP,
+                                .Length = sizeof(MEMMAP_DEVICE_PATH),
+                        },
+                        .MemoryType = EfiLoaderData,
+                        .StartingAddress = POINTER_TO_PHYSICAL_ADDRESS(kernel->iov_base),
+                        .EndingAddress = POINTER_TO_PHYSICAL_ADDRESS(kernel->iov_base) + kernel->iov_len,
+                },
+                .end_path = {
+                        .Type = END_DEVICE_PATH_TYPE,
+                        .SubType = END_ENTIRE_DEVICE_PATH_SUBTYPE,
+                        .Length = sizeof(EFI_DEVICE_PATH),
+                },
+        };
 
         original_parent_loaded_image = *parent_loaded_image;
         parent_loaded_image->FilePath = &kernel_file_path->memmap_path.Header;
