@@ -186,4 +186,4 @@ static EFI_STATUS run(EFI_HANDLE image) {
         return err;
 }
 
-DEFINE_EFI_MAIN_FUNCTION(run, "ubustub", /* wait_for_debugger= */ false);
+DEFINE_EFI_MAIN_FUNCTION(run, "stubble", /* wait_for_debugger= */ false);
