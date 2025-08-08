@@ -2,6 +2,11 @@
 
 #include "efi-log.h"
 
+#if STACK_PROTECTOR_RANDOM
+#include "proto/rng.h"
+#include "util.h"
+#endif
+
 static unsigned log_count = 0;
 bool log_isdebug = false;
 
