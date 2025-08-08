@@ -124,11 +124,5 @@ EFI_STATUS linux_exec(
                 err = compat_entry(parent_image, ST);
         }
 
-        EFI_STATUS uninstall_err = BS->UninstallMultipleProtocolInterfaces(
-                        parent_image, MAKE_GUID_PTR(EFI_LOADED_IMAGE_PROTOCOL), parent_loaded_image,
-                        NULL);
-        if (uninstall_err != EFI_SUCCESS)
-                return log_error_status(uninstall_err, "Cannot uninstall loaded image protocol: %m");
-
         return log_error_status(err, "Error starting kernel image: %m");
 }
