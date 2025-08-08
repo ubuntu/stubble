@@ -1,3 +1,25 @@
+stubble (2-1) questing; urgency=medium
+
+  [ Tobias Heider ]
+  * Revert "Revert recent shim16 fixes"
+  * Remove load_via_boot_services() and resulting dead code
+
+  [ Mate Kukri ]
+  * Load Linux kernel the same way GRUB would
+  * delete unused code and systemd features we do not require
+  * re-add command line measurement to PCR12
+  * remove loaded image protocol uninstallation that is no longer required
+
+  [ Tobias Heider ]
+  * Remove unused includes and headers
+  * Rename s/ubustub/stubble/
+  * Remove "Priority: important" which was added by accident
+  * Add sbat template filled in with versions at build time
+  * Add back RNG for stack-protector
+  * Rename s/ubustub/stubble/
+
+ -- Tobias Heider <tobias.heider@canonical.com>  Fri, 08 Aug 2025 19:34:45 +0200
+
 ubustub (1-2) questing; urgency=medium
 
   * d/control: limit to amd64 and arm64 for now
