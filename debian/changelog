@@ -12,11 +12,10 @@ stubble (2-1) questing; urgency=medium
 
   [ Tobias Heider ]
   * Remove unused includes and headers
-  * Rename s/ubustub/stubble/
   * Remove "Priority: important" which was added by accident
   * Add sbat template filled in with versions at build time
   * Add back RNG for stack-protector
-  * Rename s/ubustub/stubble/
+  * Rename s/ubustub/stubble/ (LP: #2120200)
 
  -- Tobias Heider <tobias.heider@canonical.com>  Fri, 08 Aug 2025 19:34:45 +0200
 
