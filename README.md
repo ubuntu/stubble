@@ -1,4 +1,4 @@
-# Stubby
+# Stubble
 
 A minimal UEFI kernel boot stub that serves a single purpose:
 
