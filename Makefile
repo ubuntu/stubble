@@ -13,35 +13,32 @@ ifeq ($(ARCH),aarch64)
 	CFLAGS += -mgeneral-regs-only
 endif
 
-OBJS = devicetree.o device-path-util.o efi-efivars.o efi-log.o \
-    efi-string.o export-vars.o linux.o part-discovery.o pe.o shim.o \
-    string-util-fundamental.o stub.o  url-discovery.o util.o uki.o \
-    random-seed.o smbios.o secure-boot.o initrd.o efi-firmware.o chid.o \
-    sha256.o console.o edid.o sha1.o
+OBJS = devicetree.o efi-log.o efi-string.o linux.o stub.o util.o uki.o smbios.o initrd.o pe.o \
+	chid.o edid.o sha1.o measure.o
 
 .PHONY: all clean install
 
-all: ubustub.efi
+all: stubble.efi
 
 %.o: %.c
 	$(CC) $< $(CFLAGS) -c -o $@
 
-ubustub.efi: ubustub
+stubble.efi: stubble
 	./elf2efi.py --version-major=6 --version-minor=16 \
 	    --efi-major=1 --efi-minor=1 --subsystem=10 \
 	    --minimum-sections=50 \
-	    --copy-sections=".sbat,.sdmagic,.osrel" $< $@
+	    --copy-sections=".sbat" $< $@
 
-ubustub: $(OBJS)
+stubble: $(OBJS)
 	$(CC) -o $@ $^ $(LDFLAGS)
 
-install: ubustub.efi
-	install -m 755 -d ${DESTDIR}${PREFIX}/lib/ubustub
-	install -m 644 -t ${DESTDIR}${PREFIX}/lib/ubustub ubustub.efi
-	install -m 755 -d ${DESTDIR}${PREFIX}/share/ubustub/hwids
-	install -m 644 -t ${DESTDIR}${PREFIX}/share/ubustub/hwids hwids/json/*
+install: stubble.efi
+	install -m 755 -d ${DESTDIR}${PREFIX}/lib/stubble
+	install -m 644 -t ${DESTDIR}${PREFIX}/lib/stubble stubble.efi
+	install -m 755 -d ${DESTDIR}${PREFIX}/share/stubble/hwids
+	install -m 644 -t ${DESTDIR}${PREFIX}/share/stubble/hwids hwids/json/*
 
 clean:
 	rm -f $(OBJS)
-	rm -f ubustub
-	rm -f ubustub.efi
+	rm -f stubble
+	rm -f stubble.efi

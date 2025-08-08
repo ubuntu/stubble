@@ -14,85 +14,15 @@
 #include "pe.h"
 #include "proto/device-path.h"
 #include "proto/loaded-image.h"
-#include "secure-boot.h"
 #include "util.h"
 
-#define STUB_PAYLOAD_GUID \
-        { 0x55c5d1f8, 0x04cd, 0x46b5, { 0x8a, 0x20, 0xe5, 0x6c, 0xbb, 0x30, 0x52, 0xd0 } }
-
 typedef struct {
-        const void *addr;
-        size_t len;
-        const EFI_DEVICE_PATH *device_path;
-} ValidationContext;
-
-static bool validate_payload(
-                const void *ctx, const EFI_DEVICE_PATH *device_path, const void *file_buffer, size_t file_size) {
-
-        const ValidationContext *payload = ASSERT_PTR(ctx);
-
-        if (device_path != payload->device_path)
-                return false;
-
-        /* Security arch (1) protocol does not provide a file buffer. Instead we are supposed to fetch the payload
-         * ourselves, which is not needed as we already have everything in memory and the device paths match. */
-        if (file_buffer && (file_buffer != payload->addr || file_size != payload->len))
-                return false;
-
-        return true;
-}
-
-static EFI_STATUS load_image(EFI_HANDLE parent, const void *source, size_t len, EFI_HANDLE *ret_image) {
-        assert(parent);
-        assert(source);
-        assert(ret_image);
-
-        /* We could pass a NULL device path, but it's nicer to provide something and it allows us to identify
-         * the loaded image from within the security hooks. */
-        struct {
-                VENDOR_DEVICE_PATH payload;
-                EFI_DEVICE_PATH end;
-        } _packed_ payload_device_path = {
-                .payload = {
-                        .Header = {
-                                .Type = MEDIA_DEVICE_PATH,
-                                .SubType = MEDIA_VENDOR_DP,
-                                .Length = sizeof(payload_device_path.payload),
-                        },
-                        .Guid = STUB_PAYLOAD_GUID,
-                },
-                .end = {
-                        .Type = END_DEVICE_PATH_TYPE,
-                        .SubType = END_ENTIRE_DEVICE_PATH_SUBTYPE,
-                        .Length = sizeof(payload_device_path.end),
-                },
-        };
-
-        /* We want to support unsigned kernel images as payload, which is safe to do under secure boot
-         * because it is embedded in this stub loader (and since it is already running it must be trusted). */
-        install_security_override(
-                        validate_payload,
-                        &(ValidationContext) {
-                                .addr = source,
-                                .len = len,
-                                .device_path = &payload_device_path.payload.Header,
-                        });
-
-        EFI_STATUS ret = BS->LoadImage(
-                        /*BootPolicy=*/false,
-                        parent,
-                        &payload_device_path.payload.Header,
-                        (void *) source,
-                        len,
-                        ret_image);
-
-        uninstall_security_override();
-
-        return ret;
-}
+        MEMMAP_DEVICE_PATH memmap_path;
+        EFI_DEVICE_PATH end_path;
+} _packed_ KERNEL_FILE_PATH;
 
 EFI_STATUS linux_exec(
-                EFI_HANDLE parent,
+                EFI_HANDLE parent_image,
                 const char16_t *cmdline,
                 const struct iovec *kernel,
                 const struct iovec *initrd) {
@@ -102,30 +32,77 @@ EFI_STATUS linux_exec(
         uint64_t image_base;
         EFI_STATUS err;
 
-        assert(parent);
+        assert(parent_image);
         assert(iovec_is_set(kernel));
         assert(iovec_is_valid(initrd));
 
         err = pe_kernel_info(kernel->iov_base, &entry_point, &compat_entry_point, &image_base, &kernel_size_in_memory);
-        if (err == EFI_UNSUPPORTED)
-                return log_error_status(err, "EFI_UNSUPPORTED: %m");
         if (err != EFI_SUCCESS)
                 return log_error_status(err, "Bad kernel image: %m");
 
-        _cleanup_(unload_imagep) EFI_HANDLE kernel_image = NULL;
-        err = load_image(parent, kernel->iov_base, kernel->iov_len, &kernel_image);
-        if (err != EFI_SUCCESS)
-                return log_error_status(err, "Error loading kernel image: %m");
-
-        EFI_LOADED_IMAGE_PROTOCOL *loaded_image;
+        /* Re-use the parent_image(_handle) and parent_loaded_image for the kernel image we are about to execute.
+         * We have to do this, because if kernel stub code passes its own handle to certain firmware functions,
+         * the firmware could cast EFI_LOADED_IMAGE_PROTOCOL * to a larger struct to access its own private data,
+         * and if we allocated a smaller struct, that could cause problems.
+         * This is modeled exactly after GRUB behaviour, which has proven to be functional. */
+        EFI_LOADED_IMAGE_PROTOCOL* parent_loaded_image;
         err = BS->HandleProtocol(
-                        kernel_image, MAKE_GUID_PTR(EFI_LOADED_IMAGE_PROTOCOL), (void **) &loaded_image);
+                        parent_image, MAKE_GUID_PTR(EFI_LOADED_IMAGE_PROTOCOL), (void **) &parent_loaded_image);
         if (err != EFI_SUCCESS)
-                return log_error_status(err, "Error getting kernel loaded image protocol: %m");
+                return log_error_status(err, "Cannot get parent loaded image: %m");
+
+        err = pe_kernel_check_no_relocation(kernel->iov_base);
+        if (err != EFI_SUCCESS)
+                return err;
+
+        const PeSectionHeader *headers;
+        size_t n_headers;
+
+        /* Do we need to validate anything here? the len? */
+        err = pe_section_table_from_base(kernel->iov_base, &headers, &n_headers);
+        if (err != EFI_SUCCESS)
+                return log_error_status(err, "Cannot read sections: %m");
+
+        /* Do we need to ensure under 4gb address on x86? */
+        _cleanup_pages_ Pages loaded_kernel_pages = xmalloc_pages(
+                        AllocateAnyPages, EfiLoaderCode, EFI_SIZE_TO_PAGES(kernel_size_in_memory), 0);
+
+        uint8_t* loaded_kernel = PHYSICAL_ADDRESS_TO_POINTER(loaded_kernel_pages.addr);
+        FOREACH_ARRAY(h, headers, n_headers) {
+                if (h->PointerToRelocations != 0)
+                        return log_error_status(EFI_LOAD_ERROR, "Inner kernel image contains sections with relocations, which we do not support.");
+                if (h->SizeOfRawData == 0)
+                        continue;
+
+                if ((h->VirtualAddress < image_base)
+                    || (h->VirtualAddress - image_base + h->SizeOfRawData > kernel_size_in_memory))
+                        return log_error_status(EFI_LOAD_ERROR, "Section would write outside of memory");
+                memcpy(loaded_kernel + h->VirtualAddress - image_base,
+                       (const uint8_t*)kernel->iov_base + h->PointerToRawData,
+                       h->SizeOfRawData);
+                memzero(loaded_kernel + h->VirtualAddress + h->SizeOfRawData,
+                        h->VirtualSize - h->SizeOfRawData);
+        }
+
+        _cleanup_free_ KERNEL_FILE_PATH *kernel_file_path = xnew(KERNEL_FILE_PATH, 1);
+
+        kernel_file_path->memmap_path.Header.Type = HARDWARE_DEVICE_PATH;
+        kernel_file_path->memmap_path.Header.SubType = HW_MEMMAP_DP;
+        kernel_file_path->memmap_path.Header.Length = sizeof (MEMMAP_DEVICE_PATH);
+        kernel_file_path->memmap_path.MemoryType = EfiLoaderData;
+        kernel_file_path->memmap_path.StartingAddress = POINTER_TO_PHYSICAL_ADDRESS(kernel->iov_base);
+        kernel_file_path->memmap_path.EndingAddress = POINTER_TO_PHYSICAL_ADDRESS(kernel->iov_base) + kernel->iov_len;
+
+        kernel_file_path->end_path.Type = END_DEVICE_PATH_TYPE;
+        kernel_file_path->end_path.SubType = END_ENTIRE_DEVICE_PATH_SUBTYPE;
+        kernel_file_path->end_path.Length = sizeof (EFI_DEVICE_PATH);
+
+        parent_loaded_image->ImageBase = loaded_kernel;
+        parent_loaded_image->ImageSize = kernel_size_in_memory;
 
         if (cmdline) {
-                loaded_image->LoadOptions = (void *) cmdline;
-                loaded_image->LoadOptionsSize = strsize16(loaded_image->LoadOptions);
+                parent_loaded_image->LoadOptions = (void *) cmdline;
+                parent_loaded_image->LoadOptionsSize = strsize16(parent_loaded_image->LoadOptions);
         }
 
         _cleanup_(cleanup_initrd) EFI_HANDLE initrd_handle = NULL;
@@ -134,13 +111,16 @@ EFI_STATUS linux_exec(
                 return log_error_status(err, "Error registering initrd: %m");
 
         log_wait();
-        err = BS->StartImage(kernel_image, NULL, NULL);
 
-        /* Try calling the kernel compat entry point if one exists. */
-        if (err == EFI_UNSUPPORTED && compat_entry_point > 0) {
+        if (entry_point > 0) {
+                EFI_IMAGE_ENTRY_POINT entry =
+                        (EFI_IMAGE_ENTRY_POINT) ((const uint8_t *) parent_loaded_image->ImageBase + entry_point);
+                err = entry(parent_image, ST);
+        } else if (compat_entry_point > 0) {
+                /* Try calling the kernel compat entry point if one exists. */
                 EFI_IMAGE_ENTRY_POINT compat_entry =
-                                (EFI_IMAGE_ENTRY_POINT) ((uint8_t *) loaded_image->ImageBase + compat_entry_point);
-                err = compat_entry(kernel_image, ST);
+                                (EFI_IMAGE_ENTRY_POINT) ((const uint8_t *) parent_loaded_image->ImageBase + compat_entry_point);
+                err = compat_entry(parent_image, ST);
         }
 
         return log_error_status(err, "Error starting kernel image: %m");
