@@ -1,16 +1,16 @@
-Source: ubustub
+Source: stubble
 Section: admin
 Priority: optional
 Maintainer: Ubuntu Developers <ubuntu-devel-discuss@lists.ubuntu.com>
 Standards-Version: 4.7.2
 Rules-Requires-Root: no
-Vcs-Git: https://github.com/canonical/ubustub
-Vcs-Browser: https://github.com/canonical/ubustub.git
-Homepage: https://github.com/canonical/ubustub
+Vcs-Git: https://github.com/canonical/stubble
+Vcs-Browser: https://github.com/canonical/stubble.git
+Homepage: https://github.com/canonical/stubble
 Build-Depends: debhelper-compat (=13),
                python3-pyelftools
 
-Package: ubustub
+Package: stubble
 Architecture: amd64 arm64
 Multi-Arch: foreign
 Depends: ${misc:Depends}, ${shlibs:Depends}

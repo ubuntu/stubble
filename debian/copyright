@@ -1,6 +1,6 @@
 Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
-Upstream-Name: ubustub
-Source: https://github.com/canonical/ubustub
+Upstream-Name: stubble
+Source: https://github.com/canonical/stubble
 
 Files: *
 Copyright: 2017 Max Resch <resch.max@gmail.com>
