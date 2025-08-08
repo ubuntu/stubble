@@ -1,9 +1,8 @@
 # Stubby
 
-A minimal alternative to [systemd-stub(7)](https://manpages.ubuntu.com/manpages/plucky/man7/systemd-stub.7.html)
-that serves a single purpose:
+A minimal UEFI kernel boot stub that serves a single purpose:
 
-**Automatically loading machine specific device trees embedded within the
+**Loading machine specific device trees embedded within a
 kernel image.**
 
 stubble is compatible with [systemd-stub(7)](https://manpages.ubuntu.com/manpages/plucky/man7/systemd-stub.7.html)
