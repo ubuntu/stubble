@@ -9,10 +9,9 @@ import json
 import sys
 
 guid_regexp = re.compile(r'\{[0-9a-f]{8}-[0-9a-f]{4}-[0-5][0-9a-f]{3}-[089ab][0-9a-f]{3}-[0-9a-f]{12}\}', re.I)
+filter_regexp = re.compile(r".*<- (Manufacturer \+ EnclosureKind|Manufacturer \+ Family|Manufacturer|Manufacturer \+ BiosVendor)$")
 
 def parse_hwid_file(hwid_file: Path, inpath: Path, outpath: Path) -> None:
-    content = hwid_file.open().readlines()
-
     data: dict[str, str] = {
         'Manufacturer': '',
         'Family': '',
@@ -20,12 +19,25 @@ def parse_hwid_file(hwid_file: Path, inpath: Path, outpath: Path) -> None:
     }
     guids: list[UUID] = []
 
+    # Check if outpath exists and preserve Compatible
+    try:
+        with open(str(outpath / hwid_file.relative_to(inpath).with_suffix('.json')), 'r', encoding='utf-8') as f:
+            j = json.load(f)
+            data['Compatible'] = j['compatible']
+    except:
+        pass
+
+    content = hwid_file.open().readlines()
     for line in content:
         for k in data:
             if line.startswith(k):
                 data[k] = line.split(':')[1].strip()
                 break
         else:
+            # Skip ambiguous HWIDs
+            m = filter_regexp.match(line)
+            if m is not None:
+                continue
             guid = guid_regexp.match(line)
             if guid is not None:
                 guids.append(UUID(guid.group(0)[1:-1]))
