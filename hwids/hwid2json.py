@@ -9,7 +9,7 @@ import json
 import sys
 
 guid_regexp = re.compile(r'\{[0-9a-f]{8}-[0-9a-f]{4}-[0-5][0-9a-f]{3}-[089ab][0-9a-f]{3}-[0-9a-f]{12}\}', re.I)
-filter_regexp = re.compile(r".*<- (Manufacturer \+ EnclosureKind|Manufacturer \+ Family|Manufacturer|Manufacturer \+ BiosVendor)$")
+filter_regexp = re.compile(r".*<- (Manufacturer \+ EnclosureKind|Manufacturer \+ Family|Manufacturer|Manufacturer \+ BiosVendor|Manufacturer \+ BaseboardManufacturer \+ BaseboardProduct)$")
 
 def parse_hwid_file(hwid_file: Path, inpath: Path, outpath: Path) -> None:
     data: dict[str, str] = {
