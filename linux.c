@@ -112,16 +112,9 @@ EFI_STATUS linux_exec(
 
         log_wait();
 
-        if (entry_point > 0) {
-                EFI_IMAGE_ENTRY_POINT entry =
-                        (EFI_IMAGE_ENTRY_POINT) ((const uint8_t *) parent_loaded_image->ImageBase + entry_point);
-                err = entry(parent_image, ST);
-        } else if (compat_entry_point > 0) {
-                /* Try calling the kernel compat entry point if one exists. */
-                EFI_IMAGE_ENTRY_POINT compat_entry =
-                                (EFI_IMAGE_ENTRY_POINT) ((const uint8_t *) parent_loaded_image->ImageBase + compat_entry_point);
-                err = compat_entry(parent_image, ST);
-        }
+        EFI_IMAGE_ENTRY_POINT entry =
+                (EFI_IMAGE_ENTRY_POINT) ((const uint8_t *) parent_loaded_image->ImageBase + entry_point);
+        err = entry(parent_image, ST);
 
         return log_error_status(err, "Error starting kernel image: %m");
 }
