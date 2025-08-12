@@ -256,7 +256,7 @@ EFI_STATUS chid_match(const void *hwid_buffer, size_t hwid_length, uint32_t matc
 
         EFI_GUID chids[CHID_TYPES_MAX] = {};
         static const size_t priority[] = { EXTRA_CHID_BASE + 2, EXTRA_CHID_BASE + 1, EXTRA_CHID_BASE + 0,
-                                           3, 6, 8, 10, 4, 5, 7, 9, 11 }; /* From most to least specific. */
+                                           3, 6, 8, 10, 4, 5, 7, 9 }; /* From most to least specific. */
 
         status = populate_board_chids(chids);
         if (EFI_STATUS_IS_ERROR(status))
