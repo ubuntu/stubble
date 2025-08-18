@@ -14,7 +14,7 @@
 #include "util.h"
 #include "version.h"
 
-DECLARE_SBAT(SBAT_STUB_SECTION_TEXT);
+DECLARE_SBAT_PADDED(SBAT_STUB_SECTION_TEXT);
 
 static bool parse_string(char16_t *p, const char16_t *opt) {
         const size_t opt_len = strlen16(opt);
