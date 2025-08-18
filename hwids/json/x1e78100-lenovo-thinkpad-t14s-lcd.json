@@ -1,0 +1,10 @@
+{
+    "type": "devicetree",
+    "name": "LENOVO ThinkPad T14s Gen 6 (LCD)",
+    "compatible": "lenovo,thinkpad-t14s-lcd",
+    "hwids": [
+        "83579fdf-8faf-57b4-b265-d2e817c7cf3f",
+        "b0e14398-0a96-5736-840b-7349e5c0b85c",
+        "53b6927f-d6ca-5674-a0e8-a50a989d4ba0"
+    ]
+}
