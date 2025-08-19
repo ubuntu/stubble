@@ -40,10 +40,15 @@ $ ukify build --linux=/boot/vmlinuz --stub=stubble.efi --hwids=hwids/json --dtba
 
 ## HWIDs
 
-The `.txt` files in hwids/txt have been generated with `fwupdtool hwids`.
+The `.txt` files in hwids/txt have been generated with `sudo fwupdtool hwids`.
 The can be converted to `.json` files by running `hwid2json.py` from the
 `hwids` directory. The `compatible` field of the resulting JSON files has
 to be filled in manually.
+
+## Adding new devices
+
+If you would like to add support for a device that please open a pull request
+adding the output of `sudo fwupdtool hwids` as a new file in `hwids/txt`.
 
 # Acknowledgements
 
