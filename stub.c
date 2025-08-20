@@ -166,6 +166,11 @@ static EFI_STATUS run(EFI_HANDLE image) {
          * as potential command line to use. */
         (void) process_arguments(image, loaded_image, &cmdline);
         parse_cmdline(cmdline);
+        if (log_isdebug == true) {
+                log_debug("Stubble configuration:");
+                log_debug("debug: enabled");
+                log_debug("dtb_override: %s", dtb_override ? "enabled" : "disabled");
+        }
 
         /* Find the sections we want to operate on */
         err = find_sections(loaded_image, sections);
