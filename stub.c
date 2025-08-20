@@ -161,7 +161,6 @@ static EFI_STATUS run(EFI_HANDLE image) {
         if (err != EFI_SUCCESS)
                 return err;
 
-
         /* Let's measure the passed kernel command line into the TPM. Note that this possibly
          * duplicates what we already did in the boot menu, if that was already
          * used. However, since we want the boot menu to support an EFI binary, and want to
