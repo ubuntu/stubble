@@ -35,6 +35,8 @@
 #  define TARGET_MACHINE_TYPE_COMPATIBILITY 0
 #endif
 
+bool dtb_override = true;
+
 typedef struct DosFileHeader {
         uint8_t  Magic[2];
         uint16_t LastSize;
@@ -203,7 +205,18 @@ static bool pe_use_this_dtb(
 
         EFI_STATUS err;
 
-	/* Do nothing if a firmware dtb exists */
+        if (dtb_override == true) {
+                err = devicetree_match(dtb, dtb_size);
+                if (err == EFI_SUCCESS) {
+                        log_debug("found device-tree based on compatible: %s",
+                                        devicetree_get_compatible(dtb));
+                        return true;
+                }
+                if (err != EFI_UNSUPPORTED)
+                        return false;
+        }
+
+        /* Do nothing if a firmware dtb exists */
         const void *fw_dtb = find_configuration_table(MAKE_GUID_PTR(EFI_DTB_TABLE));
         if (fw_dtb)
                 return false;
