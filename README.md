@@ -18,6 +18,11 @@ lookup table in the .hwids section of the kernel image.
 If a match is found it loads the corresponding device tree from the
 .dtbauto section before jumping tothe bundled kernel.
 
+## Command-line parameters
+
+- `debug`: Enable debug logging
+- `stubble.dtb_override=true/false`: Enable or disable device-tree compat based dtb lookup. The default is `true`.
+
 ## Dependencies
 
 ```
