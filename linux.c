@@ -27,6 +27,7 @@ EFI_STATUS linux_exec(
                 const struct iovec *kernel,
                 const struct iovec *initrd) {
 
+        EFI_LOADED_IMAGE_PROTOCOL original_parent_loaded_image;
         size_t kernel_size_in_memory = 0;
         uint32_t entry_point;
         uint64_t image_base;
@@ -97,6 +98,8 @@ EFI_STATUS linux_exec(
         kernel_file_path->end_path.SubType = END_ENTIRE_DEVICE_PATH_SUBTYPE;
         kernel_file_path->end_path.Length = sizeof (EFI_DEVICE_PATH);
 
+        original_parent_loaded_image = *parent_loaded_image;
+        parent_loaded_image->FilePath = &kernel_file_path->memmap_path.Header;
         parent_loaded_image->ImageBase = loaded_kernel;
         parent_loaded_image->ImageSize = kernel_size_in_memory;
 
@@ -115,6 +118,9 @@ EFI_STATUS linux_exec(
         EFI_IMAGE_ENTRY_POINT entry =
                 (EFI_IMAGE_ENTRY_POINT) ((const uint8_t *) parent_loaded_image->ImageBase + entry_point);
         err = entry(parent_image, ST);
+
+        /* Restore */
+        *parent_loaded_image = original_parent_loaded_image;
 
         return log_error_status(err, "Error starting kernel image: %m");
 }
