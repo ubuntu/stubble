@@ -1,3 +1,23 @@
+stubble (3-1) questing; urgency=medium
+
+  * New upstream version v3
+  * Added new HWIDs:
+     - x1e78100-lenovo-thinkpad-t14s (lcd/oled)
+     - x1e80100-asus-zenbook-a14 (lcd/oled)
+     - x1e80100-dell-inspiron-14-plus-7441
+     - x1e80100-microsoft-denali
+     - x1e80100-microsoft-romulus13
+     - x1e80100-microsoft-romulus15
+     - x1p42100-hp-omnibook-x14
+     - x1p64100-acer-swift-sf14-11
+  * Fixed linux loader path
+  * Don't falsely mark stubble.elf NX compatible
+  * Changed default behaviour when a dtb is already loaded to find a matching
+    embedded dtb by "compatible". This can be changed with the new
+    stubble.dtb_override=bool command line option
+
+ -- Tobias Heider <tobias.heider@canonical.com>  Fri, 22 Aug 2025 20:49:50 +0200
+
 stubble (2-1) questing; urgency=medium
 
   [ Tobias Heider ]
