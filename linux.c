@@ -27,8 +27,9 @@ EFI_STATUS linux_exec(
                 const struct iovec *kernel,
                 const struct iovec *initrd) {
 
+        EFI_LOADED_IMAGE_PROTOCOL original_parent_loaded_image;
         size_t kernel_size_in_memory = 0;
-        uint32_t compat_entry_point, entry_point;
+        uint32_t entry_point;
         uint64_t image_base;
         EFI_STATUS err;
 
@@ -36,7 +37,7 @@ EFI_STATUS linux_exec(
         assert(iovec_is_set(kernel));
         assert(iovec_is_valid(initrd));
 
-        err = pe_kernel_info(kernel->iov_base, &entry_point, &compat_entry_point, &image_base, &kernel_size_in_memory);
+        err = pe_kernel_info(kernel->iov_base, &entry_point, &image_base, &kernel_size_in_memory);
         if (err != EFI_SUCCESS)
                 return log_error_status(err, "Bad kernel image: %m");
 
@@ -97,6 +98,8 @@ EFI_STATUS linux_exec(
         kernel_file_path->end_path.SubType = END_ENTIRE_DEVICE_PATH_SUBTYPE;
         kernel_file_path->end_path.Length = sizeof (EFI_DEVICE_PATH);
 
+        original_parent_loaded_image = *parent_loaded_image;
+        parent_loaded_image->FilePath = &kernel_file_path->memmap_path.Header;
         parent_loaded_image->ImageBase = loaded_kernel;
         parent_loaded_image->ImageSize = kernel_size_in_memory;
 
@@ -112,16 +115,12 @@ EFI_STATUS linux_exec(
 
         log_wait();
 
-        if (entry_point > 0) {
-                EFI_IMAGE_ENTRY_POINT entry =
-                        (EFI_IMAGE_ENTRY_POINT) ((const uint8_t *) parent_loaded_image->ImageBase + entry_point);
-                err = entry(parent_image, ST);
-        } else if (compat_entry_point > 0) {
-                /* Try calling the kernel compat entry point if one exists. */
-                EFI_IMAGE_ENTRY_POINT compat_entry =
-                                (EFI_IMAGE_ENTRY_POINT) ((const uint8_t *) parent_loaded_image->ImageBase + compat_entry_point);
-                err = compat_entry(parent_image, ST);
-        }
+        EFI_IMAGE_ENTRY_POINT entry =
+                (EFI_IMAGE_ENTRY_POINT) ((const uint8_t *) parent_loaded_image->ImageBase + entry_point);
+        err = entry(parent_image, ST);
+
+        /* Restore */
+        *parent_loaded_image = original_parent_loaded_image;
 
         return log_error_status(err, "Error starting kernel image: %m");
 }

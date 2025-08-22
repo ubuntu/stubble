@@ -627,8 +627,8 @@ def elf2efi(args: argparse.Namespace):
     opt.Magic = 0x10B if elf.elfclass == 32 else 0x20B
     opt.SizeOfImage = next_section_address(sections)
 
-    # DYNAMIC_BASE|NX_COMPAT|HIGH_ENTROPY_VA or DYNAMIC_BASE|NX_COMPAT
-    opt.DllCharacteristics = 0x160 if elf.elfclass == 64 else 0x140
+    # DYNAMIC_BASE|HIGH_ENTROPY_VA or DYNAMIC_BASE
+    opt.DllCharacteristics = 0x60 if elf.elfclass == 64 else 0x40
 
     # These values are taken from a natively built PE binary (although, unused by EDK2/EFI).
     opt.SizeOfStackReserve = 0x100000

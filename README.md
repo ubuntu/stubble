@@ -1,9 +1,8 @@
-# Stubby
+# Stubble
 
-A minimal alternative to [systemd-stub(7)](https://manpages.ubuntu.com/manpages/plucky/man7/systemd-stub.7.html)
-that serves a single purpose:
+A minimal UEFI kernel boot stub that serves a single purpose:
 
-**Automatically loading machine specific device trees embedded within the
+**Loading machine specific device trees embedded within a
 kernel image.**
 
 stubble is compatible with [systemd-stub(7)](https://manpages.ubuntu.com/manpages/plucky/man7/systemd-stub.7.html)
@@ -18,6 +17,11 @@ running machine derived from smbios and compares them to an embedded
 lookup table in the .hwids section of the kernel image.
 If a match is found it loads the corresponding device tree from the
 .dtbauto section before jumping tothe bundled kernel.
+
+## Command-line parameters
+
+- `debug`: Enable debug logging
+- `stubble.dtb_override=true/false`: Enable or disable device-tree compat based dtb lookup. The default is `true`.
 
 ## Dependencies
 
@@ -41,10 +45,15 @@ $ ukify build --linux=/boot/vmlinuz --stub=stubble.efi --hwids=hwids/json --dtba
 
 ## HWIDs
 
-The `.txt` files in hwids/txt have been generated with `fwupdtool hwids`.
+The `.txt` files in hwids/txt have been generated with `sudo fwupdtool hwids`.
 The can be converted to `.json` files by running `hwid2json.py` from the
 `hwids` directory. The `compatible` field of the resulting JSON files has
 to be filled in manually.
+
+## Adding new devices
+
+If you would like to add support for a device that please open a pull request
+adding the output of `sudo fwupdtool hwids` as a new file in `hwids/txt`.
 
 # Acknowledgements
 
