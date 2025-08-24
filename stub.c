@@ -31,6 +31,7 @@ static void parse_cmdline(char16_t *p) {
         while (*p != '\0') {
                 if (parse_string(p, L"debug")) {
                         log_isdebug = true;
+                        log_set_max_level(LOG_DEBUG);
                 } else if (strncmp16(p, L"stubble.dtb_override=",
                                         strlen16(L"stubble.dtb_override=")) == 0) {
                         p += strlen16(L"stubble.dtb_override=");

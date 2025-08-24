@@ -36,6 +36,13 @@ typedef enum LogLevel {
 
 extern bool log_isdebug;
 
+LogLevel log_level_from_string(const char *s) _pure_;
+const char* log_level_to_string(LogLevel l) _const_;
+
+LogLevel log_get_max_level(void) _pure_;
+int log_set_max_level(LogLevel level);
+int log_set_max_level_from_string(const char *e);
+
 _noreturn_ void freeze(void);
 void log_wait(void);
 _gnu_printf_(3, 4) EFI_STATUS log_internal(EFI_STATUS status, LogLevel log_level, const char *format, ...);
@@ -43,14 +50,14 @@ _gnu_printf_(3, 4) EFI_STATUS log_internal(EFI_STATUS status, LogLevel log_level
 #define log_full(status, log_level, format, ...)                        \
         log_internal(status, log_level, "%s:%i@%s: " format, __FILE__, __LINE__, __func__, ##__VA_ARGS__)
 
-#define log_debug(...)     ({ log_isdebug && log_full(EFI_SUCCESS, LOG_DEBUG, __VA_ARGS__); })
+#define log_debug(...)     log_full(EFI_SUCCESS, LOG_DEBUG, __VA_ARGS__)
 #define log_info(...)      log_full(EFI_SUCCESS, LOG_INFO, __VA_ARGS__)
 #define log_notice(...)    log_full(EFI_SUCCESS, LOG_NOTICE, __VA_ARGS__)
 #define log_warning(...)   log_full(EFI_SUCCESS, LOG_WARNING, __VA_ARGS__)
 #define log_error(...)     log_full(EFI_SUCCESS, LOG_ERR, __VA_ARGS__)
 #define log_emergency(...) log_full(EFI_SUCCESS, LOG_EMERG, __VA_ARGS__)
 
-#define log_debug_status(status, ...)     ({ log_isdebug ? log_full(status, LOG_DEBUG, __VA_ARGS__) : (status); })
+#define log_debug_status(status, ...)     log_full(status, LOG_DEBUG, __VA_ARGS__)
 #define log_info_status(status, ...)      log_full(status, LOG_INFO, __VA_ARGS__)
 #define log_notice_status(status, ...)    log_full(status, LOG_NOTICE, __VA_ARGS__)
 #define log_warning_status(status, ...)   log_full(status, LOG_WARNING, __VA_ARGS__)
