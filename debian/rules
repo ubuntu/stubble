@@ -7,6 +7,6 @@ include /usr/share/dpkg/pkg-info.mk
 
 override_dh_clean:
 	dh_clean
-	sed -e "s,@UBUNTU_VERSION@,$(DEB_VERSION)," \
+	sed -e "s,@DEBIAN_VERSION@,$(DEB_VERSION)," \
 	    -e "s,@UPSTREAM_VERSION@,$(DEB_VERSION_UPSTREAM)," \
 	    debian/sbat.in > debian/sbat
