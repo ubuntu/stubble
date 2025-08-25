@@ -1,4 +1,4 @@
-stubble (3-1) questing; urgency=medium
+stubble (3-1~0ubuntu1) questing; urgency=medium
 
   * New upstream version v3
   * Added new HWIDs:
@@ -16,7 +16,7 @@ stubble (3-1) questing; urgency=medium
     embedded dtb by "compatible". This can be changed with the new
     stubble.dtb_override=bool command line option
 
- -- Tobias Heider <tobias.heider@canonical.com>  Fri, 22 Aug 2025 20:49:50 +0200
+ -- Tobias Heider <tobias.heider@canonical.com>  Mon, 25 Aug 2025 16:36:59 +0200
 
 stubble (2-1) questing; urgency=medium
 
