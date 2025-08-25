@@ -76,7 +76,6 @@ EFI_STATUS linux_exec(
                 const struct iovec *kernel,
                 const struct iovec *initrd) {
 
-        EFI_LOADED_IMAGE_PROTOCOL original_parent_loaded_image;
         size_t kernel_size_in_memory = 0;
         uint32_t entry_point;
         uint64_t image_base;
@@ -90,11 +89,25 @@ EFI_STATUS linux_exec(
         if (err != EFI_SUCCESS)
                 return log_error_status(err, "Bad kernel image: %m");
 
-        /* Re-use the parent_image(_handle) and parent_loaded_image for the kernel image we are about to execute.
-         * We have to do this, because if kernel stub code passes its own handle to certain firmware functions,
-         * the firmware could cast EFI_LOADED_IMAGE_PROTOCOL * to a larger struct to access its own private data,
-         * and if we allocated a smaller struct, that could cause problems.
-         * This is modeled exactly after GRUB behaviour, which has proven to be functional. */
+        _cleanup_free_ KERNEL_FILE_PATH *kernel_file_path = xnew(KERNEL_FILE_PATH, 1);
+        *kernel_file_path = (KERNEL_FILE_PATH) {
+                .memmap_path = {
+                        .Header = {
+                                .Type = HARDWARE_DEVICE_PATH,
+                                .SubType = HW_MEMMAP_DP,
+                                .Length = sizeof(MEMMAP_DEVICE_PATH),
+                        },
+                        .MemoryType = EfiLoaderData,
+                        .StartingAddress = POINTER_TO_PHYSICAL_ADDRESS(kernel->iov_base),
+                        .EndingAddress = POINTER_TO_PHYSICAL_ADDRESS(kernel->iov_base) + kernel->iov_len,
+                },
+                .end_path = {
+                        .Type = END_DEVICE_PATH_TYPE,
+                        .SubType = END_ENTIRE_DEVICE_PATH_SUBTYPE,
+                        .Length = sizeof(EFI_DEVICE_PATH),
+                },
+        };
+
         EFI_LOADED_IMAGE_PROTOCOL *parent_loaded_image;
         err = BS->HandleProtocol(
                         parent_image, MAKE_GUID_PTR(EFI_LOADED_IMAGE_PROTOCOL), (void **) &parent_loaded_image);
@@ -158,27 +171,12 @@ EFI_STATUS linux_exec(
                 }
         }
 
-        _cleanup_free_ KERNEL_FILE_PATH *kernel_file_path = xnew(KERNEL_FILE_PATH, 1);
-
-        *kernel_file_path = (KERNEL_FILE_PATH) {
-                .memmap_path = {
-                        .Header = {
-                                .Type = HARDWARE_DEVICE_PATH,
-                                .SubType = HW_MEMMAP_DP,
-                                .Length = sizeof(MEMMAP_DEVICE_PATH),
-                        },
-                        .MemoryType = EfiLoaderData,
-                        .StartingAddress = POINTER_TO_PHYSICAL_ADDRESS(kernel->iov_base),
-                        .EndingAddress = POINTER_TO_PHYSICAL_ADDRESS(kernel->iov_base) + kernel->iov_len,
-                },
-                .end_path = {
-                        .Type = END_DEVICE_PATH_TYPE,
-                        .SubType = END_ENTIRE_DEVICE_PATH_SUBTYPE,
-                        .Length = sizeof(EFI_DEVICE_PATH),
-                },
-        };
-
-        original_parent_loaded_image = *parent_loaded_image;
+        /* Patch the parent_image(_handle) and parent_loaded_image for the kernel image we are about to execute.
+         * We have to do this, because if kernel stub code passes its own handle to certain firmware functions,
+         * the firmware could cast EFI_LOADED_IMAGE_PROTOCOL * to a larger struct to access its own private data,
+         * and if we allocated a smaller struct, that could cause problems.
+         * This is modeled exactly after GRUB behaviour, which has proven to be functional. */
+        EFI_LOADED_IMAGE_PROTOCOL original_parent_loaded_image = *parent_loaded_image;
         parent_loaded_image->FilePath = &kernel_file_path->memmap_path.Header;
         parent_loaded_image->ImageBase = loaded_kernel;
         parent_loaded_image->ImageSize = kernel_size_in_memory;
