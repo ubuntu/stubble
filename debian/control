@@ -4,9 +4,9 @@ Priority: optional
 Maintainer: Ubuntu Developers <ubuntu-devel-discuss@lists.ubuntu.com>
 Standards-Version: 4.7.2
 Rules-Requires-Root: no
-Vcs-Git: https://github.com/canonical/stubble
-Vcs-Browser: https://github.com/canonical/stubble.git
-Homepage: https://github.com/canonical/stubble
+Vcs-Git: https://github.com/ubuntu/stubble
+Vcs-Browser: https://github.com/ubuntu/stubble.git
+Homepage: https://github.com/ubuntu/stubble
 Build-Depends: debhelper-compat (=13),
                python3-pyelftools
 

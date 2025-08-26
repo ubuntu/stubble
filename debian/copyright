@@ -1,6 +1,6 @@
 Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
 Upstream-Name: stubble
-Source: https://github.com/canonical/stubble
+Source: https://github.com/ubuntu/stubble
 
 Files: *
 Copyright: 2017 Max Resch <resch.max@gmail.com>
