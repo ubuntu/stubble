@@ -1,0 +1,48 @@
+#!/bin/sh
+set -e
+
+version="$1"
+
+# avoid running multiple times
+if [ -n "$DEB_MAINT_PARAMS" ]; then
+        eval set -- "$DEB_MAINT_PARAMS"
+        if [ -z "$1" ] || [ "$1" != "configure" ]; then
+                exit 0
+        fi
+fi
+
+# do not clobber pre-signed stubble
+if [ -e /boot/stubble.efi-$version ]; then
+    exit 0
+fi
+
+
+# XXX: we should have the list of hwids split by supported kernel.
+# XXX: we should be incorporating finddtbs.py to enumerate the matching dtb filename
+dtbs="/lib/firmware/$version/device-tree/"
+
+echo "II: making /boot/stubble.efi-$version from /boot/vmlinuz-$version"
+/usr/bin/ukify build --linux=/boot/vmlinuz-$version \
+    --stub=/usr/lib/stubble/stubble.efi \
+    --hwids=/usr/share/stubble/hwids \
+    --devicetree-auto=$dtbs/qcom/x1e80100-dell-xps13-9345.dtb \
+    --devicetree-auto=$dtbs/qcom/x1e80100-hp-elitebook-ultra-g1q.dtb \
+    --devicetree-auto=$dtbs/qcom/x1e80100-microsoft-romulus13.dtb \
+    --devicetree-auto=$dtbs/qcom/sc8280xp-lenovo-thinkpad-x13s.dtb \
+    --devicetree-auto=$dtbs/qcom/x1e78100-lenovo-thinkpad-t14s-oled.dtb \
+    --devicetree-auto=$dtbs/qcom/msm8998-lenovo-miix-630.dtb \
+    --devicetree-auto=$dtbs/qcom/x1e80100-crd.dtb \
+    --devicetree-auto=$dtbs/qcom/sc8280xp-microsoft-arcata.dtb \
+    --devicetree-auto=$dtbs/qcom/sdm850-lenovo-yoga-c630.dtb \
+    --devicetree-auto=$dtbs/qcom/x1e80100-microsoft-romulus15.dtb \
+    --devicetree-auto=$dtbs/qcom/sc8280xp-microsoft-blackrock.dtb \
+    --devicetree-auto=$dtbs/qcom/x1e001de-devkit.dtb \
+    --devicetree-auto=$dtbs/qcom/x1e80100-asus-zenbook-a14.dtb \
+    --devicetree-auto=$dtbs/qcom/x1e80100-asus-vivobook-s15.dtb \
+    --devicetree-auto=$dtbs/qcom/x1e80100-hp-omnibook-x14.dtb \
+    --devicetree-auto=$dtbs/qcom/sc8180x-lenovo-flex-5g.dtb \
+    --devicetree-auto=$dtbs/qcom/sc8280xp-huawei-gaokun3.dtb \
+    --devicetree-auto=$dtbs/qcom/x1e78100-lenovo-thinkpad-t14s.dtb \
+    --devicetree-auto=$dtbs/qcom/sc7180-acer-aspire1.dtb \
+    --devicetree-auto=$dtbs/qcom/x1e80100-lenovo-yoga-slim7x.dtb \
+    --output=/boot/stubble.efi-$version

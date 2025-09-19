@@ -19,3 +19,12 @@ Description: UEFI kernel stub with device-tree loading capability
  Small Linux kernel EFI boot stub bundling device trees, a CHID database
  and the kernel. The stub finds a matching device tree based on CHIDs
  generated from SMBIOS and loads it before executing the embedded kernel.
+
+Package: stubble-kernel
+Architecture: all
+Depends: ${misc:Depends}, ${shlibs:Depends}, stubble, systemd-ukify
+Description: UEFI kernel stub with device-tree loading capability -- kernel helper
+ Small Linux kernel EFI boot stub bundling device trees, a CHID database
+ and the kernel. The stub finds a matching device tree based on CHIDs
+ generated from SMBIOS and loads it before executing the embedded kernel.
+ Helper for the kernel to generate the stubble kernels.
