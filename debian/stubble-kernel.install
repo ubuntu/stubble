@@ -1,1 +1,2 @@
 debian/postinst.d etc/kernel/
+hwids/finddtbs.py usr/libexec/stubble
