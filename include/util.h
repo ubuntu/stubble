@@ -151,6 +151,8 @@ static inline bool efi_guid_equal(const EFI_GUID *a, const EFI_GUID *b) {
 
 void *find_configuration_table(const EFI_GUID *guid);
 
+void set_attribute_safe(size_t attr);
+
 #if __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__
 #  define be16toh(x) __builtin_bswap16(x)
 #  define be32toh(x) __builtin_bswap32(x)

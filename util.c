@@ -1,5 +1,6 @@
 /* SPDX-License-Identifier: LGPL-2.1-or-later */
 
+#include "proto/simple-text-io.h"
 #include "util.h"
 #include "version.h"
 
@@ -72,6 +73,17 @@ void *find_configuration_table(const EFI_GUID *guid) {
                         return ST->ConfigurationTable[i].VendorTable;
 
         return NULL;
+}
+
+void set_attribute_safe(size_t attr) {
+        /* Various UEFI implementations suppress color changes from a color to the same color. Often, we want
+         * to force out the color change though, hence change the color here once, and then back. We simply
+         * mark the color as bright for a moment, and then revert that. */
+
+        attr ^= 0x08;
+        ST->ConOut->SetAttribute(ST->ConOut, attr);
+        attr ^= 0x08;
+        ST->ConOut->SetAttribute(ST->ConOut, attr);
 }
 
 void *xmalloc(size_t size) {
