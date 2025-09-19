@@ -22,7 +22,7 @@ Description: UEFI kernel stub with device-tree loading capability
 
 Package: stubble-kernel
 Architecture: all
-Depends: ${misc:Depends}, ${shlibs:Depends}, stubble, systemd-ukify
+Depends: ${misc:Depends}, ${shlibs:Depends}, stubble, systemd-ukify, python3-libfdt
 Description: UEFI kernel stub with device-tree loading capability -- kernel helper
  Small Linux kernel EFI boot stub bundling device trees, a CHID database
  and the kernel. The stub finds a matching device tree based on CHIDs
