@@ -25,6 +25,7 @@ echo "II: making /boot/stubble.efi-$version from /boot/vmlinuz-$version"
 /usr/bin/ukify build --linux=/boot/vmlinuz-$version \
     --stub=/usr/lib/stubble/stubble.efi \
     --hwids=/usr/share/stubble/hwids \
+    --sbat="@/usr/share/stubble/sbat" \
     --devicetree-auto=$dtbs/qcom/x1e80100-dell-xps13-9345.dtb \
     --devicetree-auto=$dtbs/qcom/x1e80100-hp-elitebook-ultra-g1q.dtb \
     --devicetree-auto=$dtbs/qcom/x1e80100-microsoft-romulus13.dtb \
