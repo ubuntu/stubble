@@ -5,7 +5,7 @@ A minimal UEFI kernel boot stub that serves a single purpose:
 **Loading machine specific device trees embedded within a
 kernel image.**
 
-stubble is compatible with [systemd-stub(7)](https://manpages.ubuntu.com/manpages/plucky/man7/systemd-stub.7.html)
+Stubble is compatible with [systemd-stub(7)](https://manpages.ubuntu.com/manpages/plucky/man7/systemd-stub.7.html)
 and [ukify(1)](https://manpages.ubuntu.com/manpages/plucky/man1/ukify.1.html).
 It is designed to seamlessly integrate with Ubuntu's current bootloader and
 boot security model. The resulting kernel image can be signed and verified
