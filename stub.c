@@ -225,7 +225,7 @@ static EFI_STATUS run(EFI_HANDLE image) {
 
         /* Pick up the arguments passed to us, and return the rest
          * as potential command line to use. */
-        (void) process_arguments(image, loaded_image, &cmdline);
+        process_arguments(image, loaded_image, &cmdline);
 
         /* Parse stubble specific bits in the input command line,
          * always do this before deciding to use internal command line. */
