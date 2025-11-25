@@ -18,4 +18,4 @@ char *description, bool *ret_measured);
 /* New stuff is logged as EV_EVENT_TAG */
 EFI_STATUS tpm_log_tagged_event(uint32_t pcrindex, EFI_PHYSICAL_ADDRESS buffer, size_t buffer_size, uint32_t event_id, const char16_t *description, bool *ret_measured);
 
-EFI_STATUS tpm_log_load_options(const char16_t *cmdline, bool *ret_measured);
+EFI_STATUS tpm_log_load_options(const char16_t *load_options, bool *ret_measured);
