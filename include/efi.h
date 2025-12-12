@@ -13,6 +13,7 @@
 #include "cleanup-fundamental.h"        /* IWYU pragma: export */
 #include "efi-fundamental.h"            /* IWYU pragma: export */
 #include "macro-fundamental.h"          /* IWYU pragma: export */
+#include "string-table-fundamental.h"   /* IWYU pragma: export */
 
 /* uchar.h/wchar.h are not suitable for freestanding environments. */
 typedef __WCHAR_TYPE__ wchar_t;
