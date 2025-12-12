@@ -1,0 +1,16 @@
+{
+    "type": "devicetree",
+    "name": "Radxa Computer Co., Ltd. Dragon Q6A",
+    "compatible": "radxa,dragon-q6a",
+    "hwids": [
+        "d3539254-af7f-5115-aef4-81dd990f5d6f",
+        "b4dbcde5-7742-52e8-812a-dce27e3bdc6d",
+        "6aa5bd84-54d3-55cc-bfa6-8375bd44708d",
+        "302c4e8a-35ec-548b-a66e-19ee0fd13b7e",
+        "6580e4f4-79f0-51b8-9fe2-aabaecba71e6",
+        "e12e80ad-d8a6-57e1-be79-ec1bc76f96e5",
+        "0b164575-51b1-5f88-98ac-6f0ead016657",
+        "ad6496e7-1e5e-5be4-acd4-18734d1a09e2",
+        "d0fd9685-60a6-5acc-857e-c5b224024c93"
+    ]
+}
