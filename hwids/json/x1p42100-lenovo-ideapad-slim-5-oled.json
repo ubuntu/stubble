@@ -1,7 +1,7 @@
 {
     "type": "devicetree",
-    "name": "LENOVO IdeaPad Slim 5 14Q8X9",
-    "compatible": "lenovo,ideapad-slim5x",
+    "name": "LENOVO IdeaPad Slim 5 14Q8X9 (OLED)",
+    "compatible": "lenovo,ideapad-slim5x-oled",
     "hwids": [
         "6dede08b-32e0-520f-b3b5-6a8da842a919",
         "bf1bc4fc-ddc8-5c48-8e31-8f8ff2418596",
