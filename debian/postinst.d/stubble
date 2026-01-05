@@ -26,4 +26,5 @@ echo "II: making /boot/stubble.efi-$version from /boot/vmlinuz-$version"
     $(echo "$dtbs" | xargs -i echo "--devicetree-auto={}") \
     --hwids=/usr/share/stubble/hwids \
     --sbat="@/usr/share/stubble/sbat" \
+    --os-release="" \
     --output=/boot/stubble.efi-$version
