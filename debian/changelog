@@ -1,3 +1,9 @@
+stubble (4-0ubuntu3) resolute; urgency=medium
+
+  * stubble: omit .osrel section from kernel image (LP: #2133402)
+
+ -- Nick Rosbrook <enr0n@ubuntu.com>  Mon, 12 Jan 2026 09:25:46 -0500
+
 stubble (4-0ubuntu2) questing; urgency=low
 
   * stubble-kernel support with dynamic dtbs.
