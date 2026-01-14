@@ -188,7 +188,7 @@ EFI_STATUS linux_exec(
         }
 
         _cleanup_(cleanup_initrd) EFI_HANDLE initrd_handle = NULL;
-        err = initrd_register(initrd->iov_base, initrd->iov_len, &initrd_handle);
+        err = initrd_register(initrd, &initrd_handle);
         if (err != EFI_SUCCESS)
                 return log_error_status(err, "Error registering initrd: %m");
 
