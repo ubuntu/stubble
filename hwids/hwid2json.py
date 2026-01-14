@@ -58,6 +58,7 @@ def parse_hwid_file(hwid_file: Path, inpath: Path, outpath: Path) -> None:
 
     with open(str(outpath / hwid_file.relative_to(inpath).with_suffix('.json')), 'w', encoding='utf-8') as f:
         json.dump(device, f, ensure_ascii=False, indent=4, default=str)
+        f.write("\n")
 
 def parse_hwid_dir(inpath: Path, outpath: Path) -> None:
     hwid_files = inpath.rglob('*.txt')

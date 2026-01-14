@@ -1,0 +1,20 @@
+{
+    "type": "devicetree",
+    "name": "LENOVO IdeaPad 5 2-in-1 14Q8X9",
+    "compatible": "lenovo,ideapad-5-2in1",
+    "hwids": [
+        "d51c6a3a-45a7-5a6f-9628-9074f72783d5",
+        "6e60bb5f-6c91-564d-9d57-ca3b2d9c280f",
+        "8b55e9a3-c4bf-5418-bd93-2af3e9263694",
+        "d622845f-0305-5b33-b081-b7519488ed65",
+        "9b723570-d493-5541-ae58-49087512f816",
+        "eb458c6d-45b2-5299-95b7-87723235240e",
+        "920bf110-b027-51fc-97e5-bb9b46e78c75",
+        "9276913a-a9da-5237-b4e8-c8502197264a",
+        "a8a28ecb-200f-59c6-8fe3-62fa670fb80d",
+        "24248bed-dbd2-5e4f-ba41-4e03a09b904a",
+        "68320834-1316-5dad-babf-ae31cc3ff58c",
+        "63fd3926-001c-5392-9c34-fdd477025bd8",
+        "4ff87ce0-b6ce-5e37-899b-389129fc099e"
+    ]
+}
