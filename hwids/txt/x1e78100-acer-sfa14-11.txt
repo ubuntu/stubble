@@ -1,0 +1,37 @@
+Computer Information
+--------------------
+BiosVendor: Acer
+BiosVersion: 1.00
+BiosMajorRelease: 1
+BiosMinorRelease: 11
+FirmwareMajorRelease: 00
+FirmwareMinorRelease: 01
+Manufacturer: Acer
+Family: SFA14-11
+ProductName: SFA14-11
+ProductSku: 6
+EnclosureKind: a
+BaseboardManufacturer: Acer
+BaseboardProduct: QX326 gen4
+Hardware IDs
+------------
+{730dea6f-efd9-5686-a975-656c9b8423f1}   <- Manufacturer + Family + ProductName + ProductSku + BiosVendor + BiosVersion + BiosMajorRelease + BiosMinorRelease
+{97f3186d-0ad3-5f8a-98bb-72674271590d}   <- Manufacturer + Family + ProductName + BiosVendor + BiosVersion + BiosMajorRelease + BiosMinorRelease
+{39379ca2-ff12-5f56-b54f-05064dc42166}   <- Manufacturer + ProductName + BiosVendor + BiosVersion + BiosMajorRelease + BiosMinorRelease
+{c6d7090e-7535-5a11-aa9e-c61e2bf3e21c}   <- Manufacturer + Family + ProductName + ProductSku + BaseboardManufacturer + BaseboardProduct
+{b4835065-fd33-5d49-99d2-4e8a16147c23}   <- Manufacturer + Family + ProductName + ProductSku
+{74439855-9bdf-5cf1-9bf8-4057ee0fb250}   <- Manufacturer + Family + ProductName
+{7e4796fa-aa40-55f4-ac92-7350759fe5b7}   <- Manufacturer + ProductSku + BaseboardManufacturer + BaseboardProduct
+{eb342e11-e7f8-5b4b-b193-d379f676ec8b}   <- Manufacturer + ProductSku
+{3e7aed1f-e80e-59b9-a0e7-0011d93d05ba}   <- Manufacturer + ProductName + BaseboardManufacturer + BaseboardProduct
+{488a4452-62a8-5362-87ba-8265d0d0ef61}   <- Manufacturer + ProductName
+{3e7aed1f-e80e-59b9-a0e7-0011d93d05ba}   <- Manufacturer + Family + BaseboardManufacturer + BaseboardProduct
+{488a4452-62a8-5362-87ba-8265d0d0ef61}   <- Manufacturer + Family
+{92dcc94d-48f7-5ee8-b9ec-a6393fb7a484}   <- Manufacturer + EnclosureKind
+{80499c93-c2f5-52fc-a621-7a8b46822190}   <- Manufacturer + BaseboardManufacturer + BaseboardProduct
+{1e301734-5d49-5df4-9ed2-aa1c0a9dddda}   <- Manufacturer
+Extra Hardware IDs
+------------------
+{dace3a5d-f5c6-5b0b-b15c-ff1ebfc2f5c2}   <- Manufacturer + Family + ProductName + ProductSku + BiosVendor
+{c97fd9d6-efec-54e0-a6e2-3ba4cadd9655}   <- Manufacturer + Family + ProductName + BiosVendor
+{92d764a2-4116-5227-b401-4677312331f7}   <- Manufacturer + BiosVendor
