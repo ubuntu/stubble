@@ -40,7 +40,9 @@ def parse_hwid_file(hwid_file: Path, inpath: Path, outpath: Path) -> None:
                 continue
             guid = guid_regexp.match(line)
             if guid is not None:
-                guids.append(UUID(guid.group(0)[1:-1]))
+                uuid = UUID(guid.group(0)[1:-1])
+                if uuid not in guids:
+                    guids.append(uuid)
 
     for k, v in data.items():
         if not v:
