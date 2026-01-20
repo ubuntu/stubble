@@ -38,21 +38,7 @@ def get_edid_info():
         try:
             with open(edid_path, "rb") as f:
                 blob = f.read()
-                if len(blob) < 128:
-                    return None
-                EDID_FIXED_HEADER = b'\x00\xff\xff\xff\xff\xff\xff\x00'
-                if blob[0:8] != EDID_FIXED_HEADER:
-                    return None
-                m_id = int.from_bytes(blob[8:10], byteorder='big')
-                m_chars = [''] * 3
-                for i in range(3):
-                    letter = (m_id >> (5 * i)) & 0b11111
-                    if letter > 0b11010: # 26
-                        return None
-                    m_chars[2 - i] = chr(letter + ord('A') - 1)
-                manuf_name = "".join(m_chars)
-                p_code = int.from_bytes(blob[10:12], byteorder='little')
-                panel_id = f"{manuf_name}{p_code:04x}"
+                panel_id = parse_edid(blob)
                 if panel_id:
                     panels.append(panel_id)
         except (IOError, PermissionError):
@@ -61,6 +47,39 @@ def get_edid_info():
         print("Invalid number of monitors, skipping EDID CHID extensions")
         return None
     return panels[0]
+
+def parse_edid(blob):
+    if len(blob) < 128:
+        return None
+    EDID_FIXED_HEADER = b'\x00\xff\xff\xff\xff\xff\xff\x00'
+    if blob[0:8] != EDID_FIXED_HEADER:
+        return None
+    m_id = int.from_bytes(blob[8:10], byteorder='big')
+    m_chars = [''] * 3
+    for i in range(3):
+        letter = (m_id >> (5 * i)) & 0b11111
+        if letter > 0b11010: # 26
+            return None
+        m_chars[2 - i] = chr(letter + ord('A') - 1)
+    manuf_name = "".join(m_chars)
+    p_code = int.from_bytes(blob[10:12], byteorder='little')
+    panel_id = f"{manuf_name}{p_code:04x}"
+    return panel_id
+    if len(blob) < 128:
+        return None
+    if blob[0:8] != EDID_FIXED_HEADER:
+        return None
+    m_id = int.from_bytes(blob[8:10], byteorder='big')
+    m_chars = [''] * 3
+    for i in range(3):
+        letter = (m_id >> (5 * i)) & 0b11111
+        if letter > 0b11010: # 26
+            return None
+        m_chars[2 - i] = chr(letter + ord('A') - 1)
+    manuf_name = "".join(m_chars)
+    p_code = int.from_bytes(blob[10:12], byteorder='little')
+    panel_id = f"{manuf_name}{p_code:04x}"
+    return panel_id
 
 def main():
     m = get_dmi_value("sys_vendor")
