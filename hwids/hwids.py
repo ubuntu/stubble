@@ -110,7 +110,7 @@ def main():
         chid = generate_chid(fields)
         val = str(chid) if chid else "---"
         if chid:
-            print(f"#{level:<4} {{{val}}}\t<- {descr}")
+            print(f"{{{val}}}\t<- #{level:<3} {descr}")
 
 if __name__ == "__main__":
     main()
