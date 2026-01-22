@@ -30,14 +30,13 @@ EFI_STATUS linux_exec(
         EFI_LOADED_IMAGE_PROTOCOL original_parent_loaded_image;
         size_t kernel_size_in_memory = 0;
         uint32_t entry_point;
-        uint64_t image_base;
         EFI_STATUS err;
 
         assert(parent_image);
         assert(iovec_is_set(kernel));
         assert(iovec_is_valid(initrd));
 
-        err = pe_kernel_info(kernel->iov_base, &entry_point, &image_base, &kernel_size_in_memory);
+        err = pe_kernel_info(kernel->iov_base, &entry_point, /* ret_image_base= */ NULL, &kernel_size_in_memory);
         if (err != EFI_SUCCESS)
                 return log_error_status(err, "Bad kernel image: %m");
 
@@ -75,10 +74,9 @@ EFI_STATUS linux_exec(
                 if (h->SizeOfRawData == 0)
                         continue;
 
-                if ((h->VirtualAddress < image_base)
-                    || (h->VirtualAddress - image_base + h->SizeOfRawData > kernel_size_in_memory))
+                if (h->VirtualAddress + h->SizeOfRawData > kernel_size_in_memory)
                         return log_error_status(EFI_LOAD_ERROR, "Section would write outside of memory");
-                memcpy(loaded_kernel + h->VirtualAddress - image_base,
+                memcpy(loaded_kernel + h->VirtualAddress,
                        (const uint8_t*)kernel->iov_base + h->PointerToRawData,
                        h->SizeOfRawData);
                 memzero(loaded_kernel + h->VirtualAddress + h->SizeOfRawData,
