@@ -70,14 +70,13 @@ EFI_STATUS linux_exec(
 
         size_t kernel_size_in_memory = 0;
         uint32_t entry_point;
-        uint64_t image_base;
         EFI_STATUS err;
 
         assert(parent_image);
         assert(iovec_is_set(kernel));
         assert(iovec_is_valid(initrd));
 
-        err = pe_kernel_info(kernel->iov_base, &entry_point, &image_base, &kernel_size_in_memory);
+        err = pe_kernel_info(kernel->iov_base, &entry_point, /* ret_image_base= */ NULL, &kernel_size_in_memory);
         if (err != EFI_SUCCESS)
                 return log_error_status(err, "Bad kernel image: %m");
 
@@ -149,10 +148,9 @@ EFI_STATUS linux_exec(
                 if (h->SizeOfRawData == 0)
                         continue;
 
-                if ((h->VirtualAddress < image_base)
-                    || (h->VirtualAddress - image_base + h->SizeOfRawData > kernel_size_in_memory))
+                if (h->VirtualAddress + h->SizeOfRawData > kernel_size_in_memory)
                         return log_error_status(EFI_LOAD_ERROR, "Section would write outside of memory");
-                memcpy(loaded_kernel + h->VirtualAddress - image_base,
+                memcpy(loaded_kernel + h->VirtualAddress,
                        (const uint8_t*)kernel->iov_base + h->PointerToRawData,
                        h->SizeOfRawData);
                 memzero(loaded_kernel + h->VirtualAddress + h->SizeOfRawData,
@@ -161,7 +159,7 @@ EFI_STATUS linux_exec(
                 /* Not a code section? Nothing to do, leave as-is. */
                 if (memory_proto && (h->Characteristics & (PE_CODE|PE_EXECUTE))) {
                         nx_sections = xrealloc(nx_sections, n_nx_sections * sizeof(struct iovec), (n_nx_sections + 1) * sizeof(struct iovec));
-                        nx_sections[n_nx_sections].iov_base = loaded_kernel + h->VirtualAddress - image_base;
+                        nx_sections[n_nx_sections].iov_base = loaded_kernel + h->VirtualAddress;
                         nx_sections[n_nx_sections].iov_len = h->VirtualSize;
 
                         err = memory_mark_ro_x(memory_proto, &nx_sections[n_nx_sections]);
