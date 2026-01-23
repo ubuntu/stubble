@@ -35,3 +35,30 @@ Extra Hardware IDs
 {01bf1e61-d2e0-518b-bb46-eb4d1f2b1af1}   <- Manufacturer + Family + ProductName + ProductSku + BiosVendor
 {584a5084-15f2-5d20-917b-57f299e61f7e}   <- Manufacturer + Family + ProductName + BiosVendor
 {9914cecc-aab7-570e-8fce-e86009ea6bbb}   <- Manufacturer + BiosVendor
+
+Computer Information
+--------------------
+Manufacturer: Microsoft Corporation
+Family: Surface
+ProductName: Microsoft Surface Pro, 11th Edition
+ProductSku: Surface\_Pro\_11th\_Edition\_For\_Business\_2085
+BaseboardManufacturer: Microsoft Corporation
+BaseboardProduct: Microsoft Surface Pro, 11th Edition
+EDID: SDC4195
+Hardware IDs
+------------
+{64fbb7cb-3c5b-5fd7-a361-41d1d0ef2ff2}	\<- Manufacturer + Family + ProductName + ProductSku + BaseboardManufacturer + BaseboardProduct
+{fa26249f-6748-5ff3-8f78-b9cf9ab4ed2f}	\<- Manufacturer + Family + ProductName + ProductSku
+{c9c14db9-2b61-597a-a4ba-84397fe75f63}	\<- Manufacturer + Family + ProductName
+{a362faea-8d41-5642-a48e-c0349d96ad60}	\<- Manufacturer + ProductSku + BaseboardManufacturer + BaseboardProduct
+{fdc060ef-c134-5735-8b51-bfb157640a5c}	\<- Manufacturer + ProductSku
+{06128fee-87dc-50f6-8a3f-97cd9a6d8bf6}	\<- Manufacturer + ProductName + BaseboardManufacturer + BaseboardProduct
+{84b2e1d1-e695-5f41-8c41-cf1f059c616a}	\<- Manufacturer + ProductName
+{16a47337-1f8b-5bd3-b3bd-8e50b31cb1c9}	\<- Manufacturer + Family + BaseboardManufacturer + BaseboardProduct
+{ca2e5189-1d32-509f-88a0-d4ebcc721899}	\<- Manufacturer + Family
+{aca387a9-183e-5da9-8f9d-f460c3f50f54}	\<- Manufacturer + EnclosureKind
+{fdef4ae0-6bfb-5706-8aae-a565639505f5}	\<- Manufacturer + BaseboardManufacturer + BaseboardProduct
+{cc0aea32-ad2c-5013-8bed-cede6be8c9f4}	\<- Manufacturer
+{d752a22b-1fd8-53c3-89ef-8ca95618134a}	\<- Manufacturer + Family + ProductName + EDID
+{ca2ff828-b404-5253-9e0e-579c93bfb059}	\<- Manufacturer + Family + EDID
+{2ea92a70-ac64-51f7-a395-dc86b06f4e0a}	\<- Manufacturer + ProductSku + EDID

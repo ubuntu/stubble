@@ -24,7 +24,8 @@ static bool parse_string(char16_t *p, const char16_t *opt) {
 }
 
 static void parse_cmdline(char16_t *p) {
-        assert(p);
+        if(p == NULL)
+                return;
         while (*p != '\0') {
                 if (parse_string(p, L"debug")) {
                         log_isdebug = true;

@@ -40,7 +40,9 @@ def parse_hwid_file(hwid_file: Path, inpath: Path, outpath: Path) -> None:
                 continue
             guid = guid_regexp.match(line)
             if guid is not None:
-                guids.append(UUID(guid.group(0)[1:-1]))
+                uuid = UUID(guid.group(0)[1:-1])
+                if uuid not in guids:
+                    guids.append(uuid)
 
     for k, v in data.items():
         if not v:
@@ -58,6 +60,7 @@ def parse_hwid_file(hwid_file: Path, inpath: Path, outpath: Path) -> None:
 
     with open(str(outpath / hwid_file.relative_to(inpath).with_suffix('.json')), 'w', encoding='utf-8') as f:
         json.dump(device, f, ensure_ascii=False, indent=4, default=str)
+        f.write("\n")
 
 def parse_hwid_dir(inpath: Path, outpath: Path) -> None:
     hwid_files = inpath.rglob('*.txt')
