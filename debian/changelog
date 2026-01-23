@@ -1,3 +1,38 @@
+stubble (6-0ubuntu1) resolute; urgency=medium
+
+  [ Juerg Haefliger ]
+  * hwids: Add LENOVO ThinkPad X13s Gen 1 4810QL0100
+  * hwid2json.py: Add a trailing newline to the output files
+
+  [ Jens Glathe ]
+  * hwids: add Acer Swift Go 14 AI
+  * hwids: add ASUS Vivobook S15 x1p42100 variant
+  * hwids: add Lenovo Ideapad 5 2in1 14Q8X9
+  * hwids: add Lenovo Ideapad 5 Slim5x 14q8x9
+  * hwids: Lenovo Ideapad Slim 5: distinguish between OLED and LCD model
+  * hwids: add Lenovo Thinkbook 16 G7 QOY
+  * hwids: add Microsoft Surface Pro 12"
+
+  [ James Addison ]
+  * hwids: Add Medion SPRCHRGD 14 S1 Elite
+
+  [ npnh2 ]
+  * hwids: Add Acer Swift 14 Go Pro AI (SFA14-11)
+  * hwids: Add Acer Swift 14 Go Pro AI compatible
+
+  [ Tobias Heider ]
+  * hwids: Regenerate jsons
+  * Add helper script to generate hwids
+  * Reference new hwids/hwids.py script in README
+  * Fix EDID and move parsing to separate function
+  * Fix duplicate code from previous commit
+  * Make sure UUIDs are unique for each file
+  * Move level to back to fix hwid2json.py
+  * Add microsoft,denali-oled dump from Jérôme de Bretagne
+  * parse_cmdline: cmdline can be NULL, don't fail hard
+
+ -- Tobias Heider <tobias.heider@canonical.com>  Fri, 23 Jan 2026 21:42:59 +0100
+
 stubble (4-0ubuntu3) resolute; urgency=medium
 
   * stubble: omit .osrel section from kernel image (LP: #2133402)
