@@ -1,0 +1,37 @@
+Computer Information
+--------------------
+BiosVendor: Radxa Computer (Shenzhen) Co., Ltd.
+BiosVersion: 1.1.0-1
+BiosMajorRelease: 0
+BiosMinorRelease: 3
+FirmwareMajorRelease: ff
+FirmwareMinorRelease: ff
+Manufacturer: Radxa Computer (Shenzhen) Co., Ltd.
+Family: Orion O6
+ProductName: Radxa Orion O6
+ProductSku: Default
+EnclosureKind: 2
+BaseboardManufacturer: Radxa Computer (Shenzhen) Co., Ltd.
+BaseboardProduct: Radxa Orion O6
+Hardware IDs
+------------
+{a76e31b2-0cec-5d2d-a436-1e84c60404f5}   <- Manufacturer + Family + ProductName + ProductSku + BiosVendor + BiosVersion + BiosMajorRelease + BiosMinorRelease
+{2c5c2f10-795a-5a3f-bf9a-5d70f405beee}   <- Manufacturer + Family + ProductName + BiosVendor + BiosVersion + BiosMajorRelease + BiosMinorRelease
+{98a133ea-8705-53ce-adab-5e7c34fe66c6}   <- Manufacturer + ProductName + BiosVendor + BiosVersion + BiosMajorRelease + BiosMinorRelease
+{6ab5e7d7-fcff-5361-9be8-4e0b9e538ec9}   <- Manufacturer + Family + ProductName + ProductSku + BaseboardManufacturer + BaseboardProduct
+{76e2db25-ee74-5b32-85f6-92dcaed3dd0c}   <- Manufacturer + Family + ProductName + ProductSku
+{5e703f7e-d921-5f45-9bd4-fec8de5d3639}   <- Manufacturer + Family + ProductName
+{ef0d3341-4d92-57ab-93cf-b3e0bd416c10}   <- Manufacturer + ProductSku + BaseboardManufacturer + BaseboardProduct
+{aa345905-4262-5986-8b9f-7b8025c8cbb0}   <- Manufacturer + ProductSku
+{ae42b56e-d9e1-50e4-9e9b-b12f7d7fc31f}   <- Manufacturer + ProductName + BaseboardManufacturer + BaseboardProduct
+{c88b65f8-c839-5330-829a-56ec638d2950}   <- Manufacturer + ProductName
+{55ff4c03-7b5a-5f1a-ab3c-66df1ff4383b}   <- Manufacturer + Family + BaseboardManufacturer + BaseboardProduct
+{941e82e9-db59-5485-8811-a35be1df1c77}   <- Manufacturer + Family
+{39be058a-d24d-5b7a-8519-0317e9c89ae5}   <- Manufacturer + EnclosureKind
+{564e1a5c-1d0f-5ed9-8c1b-631a04541e0d}   <- Manufacturer + BaseboardManufacturer + BaseboardProduct
+{abf2c9b2-09bf-5139-96ae-8a1ee7e920ac}   <- Manufacturer
+Extra Hardware IDs
+------------------
+{b212bbd3-a10e-5e77-b45a-c26b7972a607}   <- Manufacturer + Family + ProductName + ProductSku + BiosVendor
+{c2d6fe34-6bc0-5abb-b412-95b3ecace875}   <- Manufacturer + Family + ProductName + BiosVendor
+{e84e8232-18bf-5c4e-9d6b-fb1121214e3e}   <- Manufacturer + BiosVendor
