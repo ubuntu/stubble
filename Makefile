@@ -1,9 +1,9 @@
 # SPDX-License-Identifier: LGPL-2.1-or-later
 
-include ./Make.defaults
-
 ARCH?=		$(shell uname -m)
 PREFIX?=	/usr
+
+include ./Make.defaults
 
 ifeq ($(ARCH),x86_64)
 	CFLAGS += -m64 -march=x86-64 -mno-red-zone -mgeneral-regs-only -maccumulate-outgoing-args
