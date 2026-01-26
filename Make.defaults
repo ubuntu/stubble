@@ -22,7 +22,9 @@ LDFLAGS += -z noexecstack
 LDFLAGS += -z relro
 LDFLAGS += -z separate-code
 LDFLAGS += $(shell $(CC) -print-libgcc-file-name)
-LDFLAGS += -Wl,-z,nopack-relative-relocs
+ifneq ($(ARCH),riscv64)
+	LDFLAGS += -Wl,-z,nopack-relative-relocs
+endif
 LDFLAGS += -fcf-protection=none
 LDFLAGS += -fno-asynchronous-unwind-tables
 LDFLAGS += -fno-exceptions -fno-unwind-tables
