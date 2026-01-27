@@ -37,11 +37,19 @@ Build the stub:
 $ make
 ```
 
+## Bundling with kernel
+
+Systemd's ukify tool can be used to append a kernel, device-trees in flattened
+device tree format (DTB), and hardware ID JSON files to the Stubble stub.
+
 For a simple combined kernel+stubble image bundling a single DTB you can run:
 
 ```
-$ ukify build --linux=/boot/vmlinuz --stub=stubble.efi --hwids=hwids/json --dtbauto=/boot/dtb --output=vmlinuz.efi
+$ ukify build --linux=/boot/vmlinuz --stub=stubble.efi --hwids=hwids/json \
+--devicetree-auto=/boot/dtb --output=vmlinuz.efi
 ```
+
+Add more `--device-tree-auto= parameters` for further device-trees.
 
 ## HWIDs
 
