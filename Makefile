@@ -2,6 +2,7 @@
 
 ARCH?=		$(shell uname -m)
 PREFIX?=	/usr
+MIN_SECTIONS?=2048
 
 include ./Make.defaults
 
@@ -26,7 +27,7 @@ all: stubble.efi
 stubble.efi: stubble
 	./elf2efi.py --version-major=6 --version-minor=16 \
 	    --efi-major=1 --efi-minor=1 --subsystem=10 \
-	    --minimum-sections=50 \
+	    --minimum-sections=${MIN_SECTIONS} \
 	    --copy-sections=".sbat" $< $@
 
 stubble: $(OBJS)
