@@ -37,6 +37,28 @@ Build the stub:
 $ make
 ```
 
+## Device-tree selection
+
+Stubble supports two mechanisms for selecting a device-tree:
+
+* Properties values (HWIDs) in the SMBIOS table are used to select one of the
+  appended device-trees. This mechanism is used for boards that only come with
+  ACPI tables but were the kernel does not support booting via ACPI.
+* The compatible property of the device-tree pre-installed by the firmware
+  is used to match one of the appended device-trees.
+
+HWID based selection takes precedence. The selected device-tree is installed as
+an EFI configuration table. If none of the rules matches, a pre-installed
+device-tree is kept.
+
+The HWID based rules must be supplied as a directory with JSON files.
+
+The `.txt` files in hwids/txt are generated with `hwids.py` and
+converted to `.json` files by running `hwid2json.py` from the
+`hwids` directory.
+The `compatible` field of the resulting JSON files has to be
+filled in manually.
+
 ## Bundling with kernel
 
 Systemd's ukify tool can be used to append a kernel, device-trees in flattened
@@ -50,14 +72,6 @@ $ ukify build --linux=/boot/vmlinuz --stub=stubble.efi --hwids=hwids/json \
 ```
 
 Add more `--device-tree-auto= parameters` for further device-trees.
-
-## HWIDs
-
-The `.txt` files in hwids/txt are generated with `hwids.py` and
-converted to `.json` files by running `hwid2json.py` from the
-`hwids` directory.
-The `compatible` field of the resulting JSON files has to be
-filled in manually.
 
 ## Adding new devices
 
