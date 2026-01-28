@@ -41,15 +41,15 @@ $ make
 
 Stubble supports two mechanisms for selecting a device-tree:
 
-* Properties values (HWIDs) in the SMBIOS table are used to select one of the
-  appended device-trees. This mechanism is used for boards that only come with
-  ACPI tables but were the kernel does not support booting via ACPI.
-* The compatible property of the device-tree pre-installed by the firmware
-  is used to match one of the appended device-trees.
+If a device-tree has been installed by the firmware as an EFI configuration
+table, Stubble compares the ``compatible`` string of that device-tree to the
+``compatible`` strings of the appended device-trees. If a match is found, the
+pre-installed device-tree is replaced by the one coming with with Stubble.
 
-HWID based selection takes precedence. The selected device-tree is installed as
-an EFI configuration table. If none of the rules matches, a pre-installed
-device-tree is kept.
+If no device-tree has been installed by the firmware, properties values (HWIDs)
+in the SMBIOS table are used to select one of the appended device-trees. This
+mechanism is used for boards that only come with ACPI tables but were the kernel
+does not support booting via ACPI.
 
 The HWID based rules must be supplied as a directory with JSON files.
 
