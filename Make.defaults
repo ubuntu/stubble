@@ -3,7 +3,9 @@ CFLAGS += -DRELATIVE_SOURCE_PATH="\".\""
 CFLAGS += -fno-strict-aliasing
 CFLAGS += -ffreestanding
 CFLAGS += -fshort-wchar
-CFLAGS += -fwide-exec-charset=UCS2
+ifneq ($(CC),clang)
+	CFLAGS += -fwide-exec-charset=UCS2
+endif
 CFLAGS += -mstack-protector-guard=global
 CFLAGS += -DCOLOR_NORMAL=0x0f
 CFLAGS += -fno-lto
