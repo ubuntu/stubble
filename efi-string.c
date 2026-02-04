@@ -1,6 +1,7 @@
 /* SPDX-License-Identifier: LGPL-2.1-or-later */
 
 #include "efi-string.h"
+#include "string-util-fundamental.h"
 
 #include "proto/simple-text-io.h"
 #include "util.h"
@@ -489,8 +490,7 @@ char* line_get_key_value(char *s, const char *sep, size_t *pos, char **ret_key, 
                         value++;
 
                 /* unquote */
-                if ((value[0] == '"' && line[linelen - 1] == '"') ||
-                    (value[0] == '\'' && line[linelen - 1] == '\'')) {
+                if (strchr8(QUOTES, value[0]) && line[linelen - 1] == value[0]) {
                         value++;
                         line[linelen - 1] = '\0';
                 }
