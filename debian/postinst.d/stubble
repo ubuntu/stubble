@@ -22,6 +22,7 @@ echo "$dtbs"
 # XXX: we should have the list of hwids split by supported kernel.
 echo "II: making /boot/stubble.efi-$version from /boot/vmlinuz-$version"
 /usr/bin/ukify build --linux=/boot/vmlinuz-$version \
+    --uname=$version \
     --stub=/usr/lib/stubble/stubble.efi \
     $(echo "$dtbs" | xargs -i echo "--devicetree-auto={}") \
     --hwids=/usr/share/stubble/hwids \
