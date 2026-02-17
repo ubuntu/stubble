@@ -76,7 +76,7 @@ EFI_STATUS linux_exec(
         assert(iovec_is_set(kernel));
         assert(iovec_is_valid(initrd));
 
-        err = pe_kernel_info(kernel->iov_base, &entry_point, /* ret_image_base= */ NULL, &kernel_size_in_memory);
+        err = pe_kernel_info(kernel->iov_base, &entry_point, &kernel_size_in_memory);
         if (err != EFI_SUCCESS)
                 return log_error_status(err, "Bad kernel image: %m");
 
