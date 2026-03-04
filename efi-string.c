@@ -1033,6 +1033,7 @@ char16_t *xvasprintf_status(EFI_STATUS status, const char *format, va_list ap) {
 #  undef memcmp
 #  undef memcpy
 #  undef memset
+// NOLINTBEGIN(misc-use-internal-linkage)
 _used_ void *memchr(const void *p, int c, size_t n);
 _used_ int memcmp(const void *p1, const void *p2, size_t n);
 _used_ void *memcpy(void * restrict dest, const void * restrict src, size_t n);
