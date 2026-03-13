@@ -37,3 +37,8 @@ _noreturn_ void efi_assert(const char *expr, const char *file, unsigned line, co
                 assert_se(_expr_ >= _zero);              \
                 _expr_;                                  \
         })
+
+/* Mark a pointer parameter as intentionally nullable. This is a no-op at runtime but suppresses
+ * the coccinelle check-pointer-deref warning for parameters that are safely handled before any
+ * dereference (e.g. passed to a NULL-safe helper like iovec_is_set()). */
+#define POINTER_MAY_BE_NULL(ptr) ({ (void) (ptr); })
