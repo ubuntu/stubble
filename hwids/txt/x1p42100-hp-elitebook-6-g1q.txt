@@ -1,0 +1,35 @@
+Computer Information
+--------------------
+BiosVendor: Insyde
+BiosVersion: X68 Ver.92.04.04
+BiosMajorRelease: 4
+BiosMinorRelease: 4
+FirmwareMajorRelease: 19
+FirmwareMinorRelease: 07
+Manufacturer: HP
+Family: 103C_5336AN HP EliteBook
+ProductName: HP EliteBook 6 G1q 14 inch Notebook Next Gen AI PC
+ProductSku: X8VSKU6#ABA
+EnclosureKind: a
+BaseboardManufacturer: HP
+BaseboardProduct: 8E06
+Hardware IDs
+------------
+{351005d4-e3e1-5387-a703-21cc93bd30ea}   <- Manufacturer + Family + ProductName + ProductSku + BiosVendor + BiosVersion + BiosMajorRelease + BiosMinorRelease
+{180994cf-7159-5b2d-be28-5624845887b1}   <- Manufacturer + Family + ProductName + BiosVendor + BiosVersion + BiosMajorRelease + BiosMinorRelease
+{3bf4bc3c-a850-5a6a-a95c-8e3eaf14bc96}   <- Manufacturer + ProductName + BiosVendor + BiosVersion + BiosMajorRelease + BiosMinorRelease
+{aa2c3726-f5ea-53b6-8ed5-90f5a1abaaff}   <- Manufacturer + Family + ProductName + ProductSku + BaseboardManufacturer + BaseboardProduct
+{3c513e7a-56b8-5edf-8d1e-d90fa4a8974d}   <- Manufacturer + Family + ProductName + ProductSku
+{66ae13b5-9c0f-5f57-b2dd-dc699ccc409d}   <- Manufacturer + Family + ProductName
+{70b42fea-f55e-5d19-8110-d71be6bd5e32}   <- Manufacturer + ProductSku + BaseboardManufacturer + BaseboardProduct
+{be685a81-758f-58d4-8c4e-65cf4877588c}   <- Manufacturer + ProductSku
+{5ae54112-632c-57ee-b615-c2df8ba319cd}   <- Manufacturer + ProductName + BaseboardManufacturer + BaseboardProduct
+{c7e47171-659b-55ad-a977-3df485a15742}   <- Manufacturer + ProductName
+{2c1d5a7e-43d1-5fef-89d6-a3b368779536}   <- Manufacturer + Family + BaseboardManufacturer + BaseboardProduct
+{19fe40b5-1900-5d4a-a48f-b9f9938f3e69}   <- Manufacturer + Family
+{f999e8e2-2bed-5ee7-85be-a69096b9544d}   <- Manufacturer + EnclosureKind
+{94a8509e-0634-560c-aa5a-2d74ac215987}   <- Manufacturer + BaseboardManufacturer + BaseboardProduct
+{93f84748-c854-5d6b-b78a-13c2361e0758}   <- Manufacturer
+{ea8400a5-7227-5163-9664-225070358fa0}   <- Manufacturer + Family + ProductName + ProductSku + BiosVendor
+{2dae3dcd-51ea-5422-9980-5220f02b883a}   <- Manufacturer + Family + ProductName + BiosVendor
+{ad0b7f58-06f2-50b9-856b-343f54261425}   <- Manufacturer + BiosVendor
