@@ -2,12 +2,14 @@
 
 #include "devicetree.h"
 #include "efi-log.h"
-#include "proto/loaded-image.h"
 #include "linux.h"
 #include "measure.h"
 #include "pe.h"
+#include "proto/loaded-image.h"
 #include "proto/shell-parameters.h"
 #include "sbat.h"
+#include "secure-boot.h"
+#include "string-util-fundamental.h"
 #include "uki.h"
 #include "util.h"
 #include "version.h"
@@ -151,6 +153,53 @@ static EFI_STATUS find_sections(
         return EFI_SUCCESS;
 }
 
+static char16_t* pe_section_to_str16(
+                EFI_LOADED_IMAGE_PROTOCOL *loaded_image,
+                const PeSectionVector *section) {
+
+        assert(loaded_image);
+        assert(section);
+
+        if (!PE_SECTION_VECTOR_IS_SET(section))
+                return NULL;
+
+        return xstrn8_to_16((const char *) loaded_image->ImageBase + section->memory_offset, section->memory_size);
+}
+
+static void settle_command_line(
+                EFI_LOADED_IMAGE_PROTOCOL *loaded_image,
+                const PeSectionVector sections[static _UNIFIED_SECTION_MAX],
+                char16_t **cmdline) {
+
+        assert(loaded_image);
+        assert(sections);
+        assert(cmdline);
+
+        /* This determines which command line to use. On input *cmdline contains the custom passed in cmdline
+         * if there is any.
+         *
+         * We'll suppress the custom cmdline if we are in Secure Boot mode, and if either there is already
+         * a cmdline baked into the UKI or we are in confidential VM mode. */
+
+        if (!isempty(*cmdline)) {
+                if (secure_boot_enabled() && PE_SECTION_VECTOR_IS_SET(sections + UNIFIED_SECTION_CMDLINE))
+                        /* Drop the custom cmdline */
+                        *cmdline = mfree(*cmdline);
+                else {
+                        /* Let's measure the passed kernel command line into the TPM. Note that this possibly
+                         * duplicates what we already did in the boot menu, if that was already
+                         * used. However, since we want the boot menu to support an EFI binary, and want to
+                         * this stub to be usable from any boot menu, let's measure things anyway. */
+                        bool m = false;
+                        (void) tpm_log_load_options(*cmdline, &m);
+                }
+        }
+
+        /* No cmdline specified? Or suppressed? Then let's take the one from the UKI, if there is any. */
+        if (isempty(*cmdline))
+                *cmdline = pe_section_to_str16(loaded_image, sections + UNIFIED_SECTION_CMDLINE);
+}
+
 static EFI_STATUS run(EFI_HANDLE image) {
         _cleanup_(devicetree_cleanup) struct devicetree_state dt_state = {};
         _cleanup_free_ char16_t *cmdline = NULL;
@@ -166,6 +215,9 @@ static EFI_STATUS run(EFI_HANDLE image) {
         /* Pick up the arguments passed to us, and return the rest
          * as potential command line to use. */
         (void) process_arguments(image, loaded_image, &cmdline);
+
+        /* Parse stubble specific bits in the input command line,
+         * always do this before deciding to use internal command line. */
         parse_cmdline(cmdline);
         if (log_isdebug == true) {
                 log_debug("Stubble configuration:");
@@ -178,12 +230,8 @@ static EFI_STATUS run(EFI_HANDLE image) {
         if (err != EFI_SUCCESS)
                 return err;
 
-        /* Let's measure the passed kernel command line into the TPM. Note that this possibly
-         * duplicates what we already did in the boot menu, if that was already
-         * used. However, since we want the boot menu to support an EFI binary, and want to
-         * this stub to be usable from any boot menu, let's measure things anyway. */
-        bool m = false;
-        (void) tpm_log_load_options(cmdline, &m);
+        /* Let's now check if we actually want to use the command line, measure it if it was passed in. */
+        settle_command_line(loaded_image, sections, &cmdline);
 
         /* Load the base device tree. */
         install_embedded_devicetree(loaded_image, sections, &dt_state);

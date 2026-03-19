@@ -14,8 +14,8 @@ ifeq ($(ARCH),aarch64)
 	CFLAGS += -mgeneral-regs-only
 endif
 
-OBJS = devicetree.o efi-log.o efi-string.o linux.o stub.o util.o uki.o smbios.o initrd.o pe.o \
-	chid.o edid.o sha1.o measure.o
+OBJS = devicetree.o efi-log.o efi-efivars.o efi-string.o linux.o stub.o util.o uki.o smbios.o initrd.o \
+	pe.o chid.o edid.o secure-boot.o sha1.o measure.o
 
 .PHONY: all clean install
 
