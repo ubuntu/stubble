@@ -26,18 +26,21 @@ static bool parse_string(char16_t *p, const char16_t *opt) {
 }
 
 static void parse_cmdline(char16_t *p) {
-        if(p == NULL)
+        if (p == NULL)
                 return;
         while (*p != '\0') {
                 if (parse_string(p, L"debug")) {
                         log_isdebug = true;
-                } else if (strncmp16(p, L"stubble.dtb_override=",
+                } else if (strncmp16(p, L"stubble.dtb_autodetect=",
+                                        strlen16(L"stubble.dtb_autodetect=")) == 0 ||
+                           strncmp16(p, L"stubble.dtb_override=",
                                         strlen16(L"stubble.dtb_override=")) == 0) {
-                        p += strlen16(L"stubble.dtb_override=");
+                        p = strchr16(p, '=');
+                        p++;
                         if (parse_string(p, L"true")) {
-                                dtb_override = true;
+                                dtb_autodetect = true;
                         } else if (parse_string(p, L"false")) {
-                                dtb_override = false;
+                                dtb_autodetect = false;
                         }
                 }
                 p = strchr16(p, ' ');
@@ -222,7 +225,7 @@ static EFI_STATUS run(EFI_HANDLE image) {
         if (log_isdebug == true) {
                 log_debug("Stubble configuration:");
                 log_debug("debug: enabled");
-                log_debug("dtb_override: %s", dtb_override ? "enabled" : "disabled");
+                log_debug("dtb_autodetect: %s", dtb_autodetect ? "enabled" : "disabled");
         }
 
         /* Find the sections we want to operate on */

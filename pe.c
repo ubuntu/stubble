@@ -35,7 +35,7 @@
 #  define TARGET_MACHINE_TYPE_COMPATIBILITY 0
 #endif
 
-bool dtb_override = true;
+bool dtb_autodetect = true;
 
 typedef struct DosFileHeader {
         uint8_t  Magic[2];
@@ -205,7 +205,7 @@ static bool pe_use_this_dtb(
 
         EFI_STATUS err;
 
-        if (dtb_override == true) {
+        if (dtb_autodetect == true) {
                 err = devicetree_match(dtb, dtb_size);
                 if (err == EFI_SUCCESS) {
                         log_debug("found device-tree based on compatible: %s",
