@@ -1,7 +1,7 @@
 {
     "type": "devicetree",
     "name": "LENOVO IdeaPad Slim 3 15Q8X10",
-    "compatible": "lenovo,ideapad-slim3x",
+    "compatible": "lenovo,ideapad-slim3",
     "hwids": [
         "d0a73ed7-fc46-5f8c-bfaa-62375492a303",
         "14d6f910-fb4f-5ff1-87e4-03a16448a255",
