@@ -1,0 +1,9 @@
+/dts-v1/;
+
+/ {
+	compatible = "stubble,test-root", "stubble,test-soc";
+
+	child-node {
+		compatible = "stubble,wrong-child";
+	};
+};

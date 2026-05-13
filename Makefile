@@ -17,7 +17,10 @@ endif
 OBJS = devicetree.o efi-log.o efi-efivars.o efi-string.o linux.o stub.o util.o uki.o smbios.o initrd.o \
 	pe.o chid.o edid.o secure-boot.o sha1.o measure.o
 
-.PHONY: all clean install
+TEST_CFLAGS = -I include -DRELATIVE_SOURCE_PATH="\".\"" -ffreestanding -fshort-wchar -fno-strict-aliasing -O2 -ffunction-sections -fdata-sections
+TEST_LDFLAGS = -Wl,--gc-sections
+
+.PHONY: all check clean install
 
 all: stubble.efi
 
@@ -39,7 +42,23 @@ install: stubble.efi
 	install -m 755 -d ${DESTDIR}${PREFIX}/share/stubble/hwids
 	install -m 644 -t ${DESTDIR}${PREFIX}/share/stubble/hwids hwids/json/*
 
+test/data/test-devicetree_get_compatible.dtb: test/data/test-devicetree_get_compatible.dts
+	dtc -I dts -O dtb -o $@ $<
+
+test/data/test-devicetree_get_compatible-child-only.dtb: test/data/test-devicetree_get_compatible-child-only.dts
+	dtc -I dts -O dtb -o $@ $<
+
+test/test-devicetree_get_compatible: test/test-devicetree_get_compatible.c devicetree.c
+	$(CC) $(TEST_CFLAGS) -o $@ $^ $(TEST_LDFLAGS)
+
+check: test/test-devicetree_get_compatible \
+	test/data/test-devicetree_get_compatible.dtb \
+	test/data/test-devicetree_get_compatible-child-only.dtb
+	$< $(word 2,$^) $(word 3,$^)
+
 clean:
 	rm -f $(OBJS)
 	rm -f stubble
 	rm -f stubble.efi
+	rm -f test/test-devicetree_get_compatible
+	rm -f test/data/*.dtb
