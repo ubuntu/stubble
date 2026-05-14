@@ -1,0 +1,7 @@
+/dts-v1/;
+
+/ {
+	child-node {
+		compatible = "stubble,child-only";
+	};
+};

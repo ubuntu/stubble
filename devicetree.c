@@ -96,33 +96,54 @@ const char* devicetree_get_compatible(const void *dtb) {
 
         size_t size_words = struct_size / sizeof(uint32_t);
         size_t len, name_off, len_words, s;
+        int level = -1;
 
-        for (size_t i = 0; i < end; i++) {
+        for (size_t i = 0; i < size_words; i++) {
                 switch (be32toh(cursor[i])) {
                 case FDT_BEGIN_NODE:
-                        if (i >= size_words || cursor[++i] != 0)
+                        if (++i >= size_words)
                                 return NULL;
+
+                        for (;; i++) {
+                                if (i >= size_words)
+                                        return NULL;
+                                if (memchr(&cursor[i], 0, sizeof(uint32_t)))
+                                        break;
+                        }
+
+                        level++;
+                        break;
+                case FDT_END_NODE:
+                        if (level < 0)
+                                return NULL;
+
+                        level--;
                         break;
                 case FDT_NOP:
                         break;
                 case FDT_PROP:
                         /* At least 3 words should present: len, name_off, c (nul-terminated string always has non-zero length) */
-                        if (i + 3 >= size_words)
+                        if (level < 0 || i + 3 >= size_words)
                                 return NULL;
                         len = be32toh(cursor[++i]);
                         name_off = be32toh(cursor[++i]);
                         len_words = DIV_ROUND_UP(len, sizeof(uint32_t));
 
-                        if (ADD_SAFE(&s, name_off, STRLEN("compatible")) &&
+                        if (level == 0 &&
+                            ADD_SAFE(&s, name_off, STRLEN("compatible")) &&
                             s < strings_size && streq8(strings_block + name_off, "compatible")) {
-                                const char *c = (const char *) &cursor[++i];
-                                if (len == 0 || i + len_words > size_words || c[len - 1] != '\0')
-                                        c = NULL;
+                                const char *c = (const char *) &cursor[i + 1];
+
+                                if (len == 0 || i + len_words >= size_words || c[len - 1] != '\0')
+                                        return NULL;
 
                                 return c;
                         }
+
                         i += len_words;
                         break;
+                case FDT_END:
+                        return NULL;
                 default:
                         return NULL;
                 }
