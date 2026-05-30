@@ -1,11 +1,11 @@
 Computer Information
 --------------------
 BiosVendor: LENOVO
-BiosVersion: Q1CN22WW
+BiosVersion: Q1CN25WW
 BiosMajorRelease: 1
-BiosMinorRelease: 22
+BiosMinorRelease: 25
 FirmwareMajorRelease: 01
-FirmwareMinorRelease: 16
+FirmwareMinorRelease: 19
 Manufacturer: LENOVO
 Family: IdeaPad 5 2-in-1 14Q8X9
 ProductName: 83GH
@@ -15,9 +15,9 @@ BaseboardManufacturer: LENOVO
 BaseboardProduct: LNVNB161216
 Hardware IDs
 ------------
-{d51c6a3a-45a7-5a6f-9628-9074f72783d5}   <- Manufacturer + Family + ProductName + ProductSku + BiosVendor + BiosVersion + BiosMajorRelease + BiosMinorRelease
-{6e60bb5f-6c91-564d-9d57-ca3b2d9c280f}   <- Manufacturer + Family + ProductName + BiosVendor + BiosVersion + BiosMajorRelease + BiosMinorRelease
-{8b55e9a3-c4bf-5418-bd93-2af3e9263694}   <- Manufacturer + ProductName + BiosVendor + BiosVersion + BiosMajorRelease + BiosMinorRelease
+{db0cb253-2dc7-5164-8ce7-6ed312c1dd9b}   <- Manufacturer + Family + ProductName + ProductSku + BiosVendor + BiosVersion + BiosMajorRelease + BiosMinorRelease
+{72fe9329-cc32-5032-8714-d7ec08a9d441}   <- Manufacturer + Family + ProductName + BiosVendor + BiosVersion + BiosMajorRelease + BiosMinorRelease
+{aa4cb99b-c4ff-56a4-8b63-ab59db887972}   <- Manufacturer + ProductName + BiosVendor + BiosVersion + BiosMajorRelease + BiosMinorRelease
 {d622845f-0305-5b33-b081-b7519488ed65}   <- Manufacturer + Family + ProductName + ProductSku + BaseboardManufacturer + BaseboardProduct
 {9b723570-d493-5541-ae58-49087512f816}   <- Manufacturer + Family + ProductName + ProductSku
 {eb458c6d-45b2-5299-95b7-87723235240e}   <- Manufacturer + Family + ProductName

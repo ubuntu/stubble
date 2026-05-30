@@ -4,7 +4,6 @@
 #define EINVAL 22
 #include "string-util-fundamental.h"
 
-/* Features of the loader, i.e. systemd-boot */
 #define EFI_LOADER_FEATURE_CONFIG_TIMEOUT          (UINT64_C(1) << 0)
 #define EFI_LOADER_FEATURE_CONFIG_TIMEOUT_ONE_SHOT (UINT64_C(1) << 1)
 #define EFI_LOADER_FEATURE_ENTRY_DEFAULT           (UINT64_C(1) << 2)
@@ -24,7 +23,6 @@
 #define EFI_LOADER_FEATURE_TYPE1_UKI               (UINT64_C(1) << 16)
 #define EFI_LOADER_FEATURE_TYPE1_UKI_URL           (UINT64_C(1) << 17)
 
-/* Features of the stub, i.e. systemd-stub */
 #define EFI_STUB_FEATURE_REPORT_BOOT_PARTITION     (UINT64_C(1) << 0)
 #define EFI_STUB_FEATURE_PICK_UP_CREDENTIALS       (UINT64_C(1) << 1)
 #define EFI_STUB_FEATURE_PICK_UP_SYSEXTS           (UINT64_C(1) << 2)

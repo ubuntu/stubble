@@ -18,6 +18,11 @@ lookup table in the .hwids section of the kernel image.
 If a match is found it loads the corresponding device tree from the
 .dtbauto section before jumping tothe bundled kernel.
 
+## Command-line parameters
+
+- `debug`: Enable debug logging
+- `stubble.dtb_override=true/false`: Enable or disable device-tree compat based dtb lookup. The default is `true`.
+
 ## Dependencies
 
 ```
@@ -32,18 +37,41 @@ Build the stub:
 $ make
 ```
 
+## Device-tree selection
+
+Stubble supports two mechanisms for selecting a device-tree:
+
+If a device-tree has been installed by the firmware as an EFI configuration
+table, Stubble compares the ``compatible`` string of that device-tree to the
+``compatible`` strings of the appended device-trees. If a match is found, the
+pre-installed device-tree is replaced by the one coming with with Stubble.
+
+If no device-tree has been installed by the firmware, properties values (HWIDs)
+in the SMBIOS table are used to select one of the appended device-trees. This
+mechanism is used for boards that only come with ACPI tables but were the kernel
+does not support booting via ACPI.
+
+The HWID based rules must be supplied as a directory with JSON files.
+
+The `.txt` files in hwids/txt are generated with `hwids.py` and
+converted to `.json` files by running `hwid2json.py` from the
+`hwids` directory.
+The `compatible` field of the resulting JSON files has to be
+filled in manually.
+
+## Bundling with kernel
+
+Systemd's ukify tool can be used to append a kernel, device-trees in flattened
+device tree format (DTB), and hardware ID JSON files to the Stubble stub.
+
 For a simple combined kernel+stubble image bundling a single DTB you can run:
 
 ```
-$ ukify build --linux=/boot/vmlinuz --stub=stubble.efi --hwids=hwids/json --dtbauto=/boot/dtb --output=vmlinuz.efi
+$ ukify build --linux=/boot/vmlinuz --stub=stubble.efi --hwids=hwids/json \
+--devicetree-auto=/boot/dtb --output=vmlinuz.efi
 ```
 
-## HWIDs
-
-The `.txt` files in hwids/txt have been generated with `sudo fwupdtool hwids`.
-The can be converted to `.json` files by running `hwid2json.py` from the
-`hwids` directory. The `compatible` field of the resulting JSON files has
-to be filled in manually.
+Add more `--device-tree-auto= parameters` for further device-trees.
 
 ## Adding new devices
 

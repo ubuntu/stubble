@@ -1,0 +1,35 @@
+Computer Information
+--------------------
+BiosVendor: Qualcomm Technologies, Inc.
+BiosVersion: 7.0.260116.BOOT.OSSUEFI.3.0-18876-GLYMUR-1
+BiosMajorRelease: 255
+BiosMinorRelease: 255
+FirmwareMajorRelease: ff
+FirmwareMinorRelease: ff
+Manufacturer: Qualcomm
+Family: X2000094
+ProductName: CRD
+ProductSku: 6
+EnclosureKind: 8
+Hardware IDs
+------------
+{e88849e7-af59-5c58-9776-75cfb6bac078}   <- Manufacturer + Family + ProductName + ProductSku + BiosVendor + BiosVersion + BiosMajorRelease + BiosMinorRelease
+{d9972e14-0a66-56a8-9cee-8c5647fbe470}   <- Manufacturer + Family + ProductName + BiosVendor + BiosVersion + BiosMajorRelease + BiosMinorRelease
+{e53db94e-68fe-541f-b06e-4b5a253dadf9}   <- Manufacturer + ProductName + BiosVendor + BiosVersion + BiosMajorRelease + BiosMinorRelease
+not available as 'BaseboardManufacturer' unknown
+{ce496e01-9bd8-522e-8937-8045126ed39a}   <- Manufacturer + Family + ProductName + ProductSku
+{031a5cd7-883e-5004-90c2-92d29025c777}   <- Manufacturer + Family + ProductName
+not available as 'BaseboardManufacturer' unknown
+{4bb05d50-6c4f-525d-a9ec-8924afd6edea}   <- Manufacturer + ProductSku
+not available as 'BaseboardManufacturer' unknown
+{339fc6d2-e0f4-5226-9dd9-62c4dc41881d}   <- Manufacturer + ProductName
+not available as 'BaseboardManufacturer' unknown
+{aff27856-231c-5066-89f1-888df98f98c8}   <- Manufacturer + Family
+{3c42c62d-8cda-5837-9e7a-8878ec21af95}   <- Manufacturer + EnclosureKind
+not available as 'BaseboardManufacturer' unknown
+{0d601876-0ac6-533e-8386-3a58203d8c33}   <- Manufacturer
+Extra Hardware IDs
+------------------
+{49bcdd2b-d769-5071-b3a4-4a02ff1d36f5}   <- Manufacturer + Family + ProductName + ProductSku + BiosVendor
+{6fcbdad8-149e-5f72-b2e3-0fd78572ff93}   <- Manufacturer + Family + ProductName + BiosVendor
+{d86bea02-5d71-5ee5-98dc-4f74d5777dde}   <- Manufacturer + BiosVendor

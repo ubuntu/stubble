@@ -1,7 +1,7 @@
 {
     "type": "devicetree",
     "name": "ASUSTeK COMPUTER INC. ASUS Zenbook A14",
-    "compatible": "asus,zenbook-a14-ux3407qa-oled",
+    "compatible": "asus,zenbook-a14-ux3407qa-lcd",
     "hwids": [
         "c6d100b1-9de7-5636-a3cc-f28fa46fb926",
         "85f50d27-f4cb-54df-9aae-f6f09700b132",

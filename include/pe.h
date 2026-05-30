@@ -3,6 +3,8 @@
 
 #include "efi.h"
 
+extern bool dtb_override;
+
 /* This is the actual PE format of the section header */
 typedef struct PeSectionHeader {
         uint8_t  Name[8];
