@@ -324,8 +324,18 @@ def convert_sections(elf: ELFFile, opt: PeOptionalHeader) -> typing.List[PeSecti
         # The ELF sections inside should also be properly aligned as we reuse the ELF VMA layout
         # for the PE image.
         vma = pe_s.VirtualAddress
-        pe_s.VirtualAddress = align_down(vma, SECTION_ALIGNMENT)
-        pe_s.data = bytearray(vma - pe_s.VirtualAddress) + pe_s.data
+        # First section: align down. Subsequent sections: align up from previous end
+        # to avoid overlaps. The original code could cause section overlaps with
+        # older binutils versions.
+        if last_vma == (0, 0):
+            pe_s.VirtualAddress = align_down(vma, SECTION_ALIGNMENT)
+        else:
+            pe_s.VirtualAddress = align_to(sum(last_vma), SECTION_ALIGNMENT)
+        # Add padding as needed
+        if pe_s.VirtualAddress <= vma:
+            pe_s.data = bytearray(vma - pe_s.VirtualAddress) + pe_s.data
+        else:
+            pe_s.data = bytearray(pe_s.VirtualAddress - vma) + pe_s.data
 
         pe_s.VirtualSize = len(pe_s.data)
         pe_s.SizeOfRawData = align_to(len(pe_s.data), FILE_ALIGNMENT)
