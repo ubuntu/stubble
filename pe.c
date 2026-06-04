@@ -594,7 +594,11 @@ void pe_locate_sections(
                             sections);
 }
 
-EFI_STATUS pe_kernel_info(const void *base, uint32_t *ret_entry_point, size_t *ret_size_in_memory) {
+EFI_STATUS pe_kernel_info(
+                const void *base,
+                uint32_t *ret_entry_point,
+                size_t *ret_size_in_memory,
+                uint32_t *ret_section_alignment) {
         assert(base);
 
         const DosFileHeader *dos = (const DosFileHeader *) base;
@@ -609,6 +613,16 @@ EFI_STATUS pe_kernel_info(const void *base, uint32_t *ret_entry_point, size_t *r
          * of the SizeOfImage field in the PE header and return it */
         size_t size_in_memory = pe->OptionalHeader.SizeOfImage;
 
+        /* Honoring SectionAlignment lets callers place the image so the kernel's EFI stub need not relocate
+         * it (SZ_64K on arm64). The PE spec requires a power of 2; for a non-conforming value fall back to
+         * plain page alignment (what we assumed before honoring this field) rather than propagate something
+         * that would break the allocator's over-alignment math. */
+        uint32_t section_alignment = pe->OptionalHeader.SectionAlignment;
+        if (!ISPOWEROF2(section_alignment)) {
+                log_warning("PE SectionAlignment %" PRIu32 " is not a power of 2, falling back to page alignment.", section_alignment);
+                section_alignment = EFI_PAGE_SIZE;
+        }
+
         /* Support for LINUX_INITRD_MEDIA_GUID was added in kernel stub 1.0. */
         if (pe->OptionalHeader.MajorImageVersion < 1)
                 return EFI_UNSUPPORTED;
@@ -621,6 +635,8 @@ EFI_STATUS pe_kernel_info(const void *base, uint32_t *ret_entry_point, size_t *r
                 *ret_entry_point = pe->OptionalHeader.AddressOfEntryPoint;
         if (ret_size_in_memory)
                 *ret_size_in_memory = size_in_memory;
+        if (ret_section_alignment)
+                *ret_section_alignment = section_alignment;
         return EFI_SUCCESS;
 }
 
