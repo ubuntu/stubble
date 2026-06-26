@@ -38,28 +38,34 @@ static inline bool PE_SECTION_VECTOR_IS_SET(const PeSectionVector *v) {
 
 EFI_STATUS pe_section_table_from_base(
                 const void *base,
+                size_t base_len,
                 const PeSectionHeader **ret_section_table,
-                size_t *ret_n_section_table);
+                size_t *ret_n_section_table,
+                size_t *ret_size_in_memory);
 
 EFI_STATUS pe_section_table_from_file(
                 EFI_FILE *handle,
                 PeSectionHeader **ret_section_table,
-                size_t *ret_n_section_table);
+                size_t *ret_n_section_table,
+                size_t *ret_size_in_memory);
 
 void pe_locate_sections(
                 const PeSectionHeader section_table[],
                 size_t n_section_table,
                 const char* const section_names[],
                 size_t validate_base,
+                size_t size_in_memory,
                 PeSectionVector sections[]);
 
 EFI_STATUS pe_memory_locate_sections(
                 const void *base,
+                size_t base_len,
                 const char *const section_names[],
                 PeSectionVector sections[]);
 
 EFI_STATUS pe_kernel_info(
                 const void *base,
+                size_t base_len,
                 uint32_t *ret_entry_point,
                 size_t *ret_size_in_memory,
                 uint32_t *ret_section_alignment);

@@ -145,8 +145,8 @@ static EFI_STATUS find_sections(
         assert(sections);
 
         const PeSectionHeader *section_table;
-        size_t n_section_table;
-        err = pe_section_table_from_base(loaded_image->ImageBase, &section_table, &n_section_table);
+        size_t n_section_table, size_in_memory;
+        err = pe_section_table_from_base(loaded_image->ImageBase, loaded_image->ImageSize, &section_table, &n_section_table, &size_in_memory);
         if (err != EFI_SUCCESS)
                 return log_error_status(err, "Unable to locate PE section table: %m");
 
@@ -156,6 +156,7 @@ static EFI_STATUS find_sections(
                     n_section_table,
                     unified_sections,
                     /* validate_base= */ PTR_TO_SIZE(loaded_image->ImageBase),
+                    size_in_memory,
                     sections);
 
         if (!PE_SECTION_VECTOR_IS_SET(sections + UNIFIED_SECTION_LINUX))
