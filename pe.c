@@ -631,6 +631,11 @@ EFI_STATUS pe_kernel_info(
         if (pe->FileHeader.Machine != TARGET_MACHINE_TYPE)
                 return EFI_UNSUPPORTED;
 
+        /* The entry point is later called as ImageBase + entry_point, and only SizeOfImage
+         * bytes are allocated for the image, so reject an entry point outside of it. */
+        if (pe->OptionalHeader.AddressOfEntryPoint >= size_in_memory)
+                return EFI_LOAD_ERROR;
+
         if (ret_entry_point)
                 *ret_entry_point = pe->OptionalHeader.AddressOfEntryPoint;
         if (ret_size_in_memory)
