@@ -146,6 +146,7 @@ static void pe_locate_sections_internal(
                 size_t n_section_table,
                 const char *const section_names[],
                 size_t validate_base,
+                size_t size_in_memory,
                 const void *device_table,
                 const Device *device,
                 PeSectionVector sections[]);
@@ -181,6 +182,54 @@ static size_t section_table_offset(const DosFileHeader *dos, const PeFileHeader 
         assert(pe);
 
         return dos->ExeHeader + offsetof(PeFileHeader, OptionalHeader) + pe->FileHeader.SizeOfOptionalHeader;
+}
+
+static EFI_STATUS pe_headers_from_base(
+                const void *base,
+                size_t base_len,
+                bool allow_compatibility,
+                const DosFileHeader **ret_dos,
+                const PeFileHeader **ret_pe) {
+
+        assert(base);
+        assert(ret_dos);
+        assert(ret_pe);
+
+        /* Validate the DOS and PE headers against the buffer length */
+
+        if (base_len < sizeof(DosFileHeader))
+                return EFI_LOAD_ERROR;
+
+        const DosFileHeader *dos = (const DosFileHeader*) base;
+        if (!verify_dos(dos))
+                return EFI_LOAD_ERROR;
+
+        if (dos->ExeHeader > base_len || base_len - dos->ExeHeader < sizeof(PeFileHeader))
+                return EFI_LOAD_ERROR;
+
+        const PeFileHeader *pe = (const PeFileHeader*) ((const uint8_t*) base + dos->ExeHeader);
+        if (!verify_pe(dos, pe, allow_compatibility))
+                return EFI_LOAD_ERROR;
+
+        *ret_dos = dos;
+        *ret_pe = pe;
+        return EFI_SUCCESS;
+}
+
+static bool pe_section_table_in_bounds(
+                const DosFileHeader *dos,
+                const PeFileHeader *pe,
+                size_t base_len) {
+
+        assert(dos);
+        assert(pe);
+
+        /* verify_pe() already bounded SizeOfOptionalHeader so this offset cannot overflow, and
+         * NumberOfSections is a uint16_t so the byte count cannot either. */
+        size_t offset = section_table_offset(dos, pe);
+        size_t bytes = (size_t) pe->FileHeader.NumberOfSections * sizeof(PeSectionHeader);
+
+        return offset <= base_len && base_len - offset >= bytes;
 }
 
 static bool pe_section_name_equal(const char *a, const char *b) {
@@ -343,7 +392,8 @@ static bool pe_machdb(
                 size_t uki_dtb_size,
                 const PeSectionHeader section_table[],
                 size_t n_section_table,
-                size_t validate_base) {
+                size_t validate_base,
+                size_t size_in_memory) {
 
         assert(uki_dtb);
         assert(section_table || n_section_table == 0);
@@ -356,6 +406,7 @@ static bool pe_machdb(
                         n_section_table,
                         machdb_section_names,
                         validate_base,
+                        size_in_memory,
                         /* device_table */ NULL,
                         /* device */ NULL,
                         machdb_section);
@@ -398,6 +449,7 @@ static bool pe_use_this_dtb(
                 const PeSectionHeader section_table[],
                 size_t n_section_table,
                 size_t validate_base,
+                size_t size_in_memory,
                 size_t section_nb) {
 
         assert(dtb);
@@ -420,7 +472,7 @@ static bool pe_use_this_dtb(
         if (fw_dtb) {
                 /* Try machine matching via machdb if available */
                 if (pe_machdb(fw_dtb, dtb, dtb_size, section_table,
-                              n_section_table, validate_base))
+                              n_section_table, validate_base, size_in_memory))
                         return true;
                 return false;
         }
@@ -449,6 +501,7 @@ static void pe_locate_sections_internal(
                 size_t n_section_table,
                 const char *const section_names[],
                 size_t validate_base,
+                size_t size_in_memory,
                 const void *device_table,
                 const Device *device,
                 PeSectionVector sections[]) {
@@ -479,6 +532,11 @@ static void pe_locate_sections_internal(
                         if ((size_t) j->VirtualSize > size_max)
                                 continue;
 
+                        /* The section's in-memory range must lie within the image, otherwise consumers
+                         * reading it via memory_offset/memory_size would read past the loaded image. */
+                        if ((size_t) j->VirtualAddress + (size_t) j->VirtualSize > size_in_memory)
+                                continue;
+
                         /* 2nd overflow check: ignore sections that are impossibly large also taking the
                          * loaded base into account. */
                         if (validate_base != 0) {
@@ -503,6 +561,7 @@ static void pe_locate_sections_internal(
                                                   section_table,
                                                   n_section_table,
                                                   validate_base,
+                                                  size_in_memory,
                                                   (PTR_TO_SIZE(j) - PTR_TO_SIZE(section_table)) / sizeof(*j)))
                                         continue;
                         }
@@ -539,6 +598,7 @@ void pe_locate_sections(
                 size_t n_section_table,
                 const char *const section_names[],
                 size_t validate_base,
+                size_t size_in_memory,
                 PeSectionVector sections[]) {
 
         if (!looking_for_dtbauto(section_names))
@@ -547,6 +607,7 @@ void pe_locate_sections(
                                   n_section_table,
                                   section_names,
                                   validate_base,
+                                  size_in_memory,
                                   /* device_base */ NULL,
                                   /* device */ NULL,
                                   sections);
@@ -567,6 +628,7 @@ void pe_locate_sections(
                                 n_section_table,
                                 hwid_section_names,
                                 validate_base,
+                                size_in_memory,
                                 /* device_table */ NULL,
                                 /* device */ NULL,
                                 hwids_section);
@@ -588,6 +650,7 @@ void pe_locate_sections(
                             n_section_table,
                             section_names,
                             validate_base,
+                            size_in_memory,
                             hwids,
                             device,
                             sections);
@@ -595,18 +658,17 @@ void pe_locate_sections(
 
 EFI_STATUS pe_kernel_info(
                 const void *base,
+                size_t base_len,
                 uint32_t *ret_entry_point,
                 size_t *ret_size_in_memory,
                 uint32_t *ret_section_alignment) {
         assert(base);
 
-        const DosFileHeader *dos = (const DosFileHeader *) base;
-        if (!verify_dos(dos))
-                return EFI_LOAD_ERROR;
-
-        const PeFileHeader *pe = (const PeFileHeader *) ((const uint8_t *) base + dos->ExeHeader);
-        if (!verify_pe(dos, pe, /* allow_compatibility= */ true))
-                return EFI_LOAD_ERROR;
+        const DosFileHeader *dos;
+        const PeFileHeader *pe;
+        EFI_STATUS err = pe_headers_from_base(base, base_len, /* allow_compatibility= */ true, &dos, &pe);
+        if (err != EFI_SUCCESS)
+                return err;
 
         /* When allocating we need to also consider the virtual/uninitialized data sections, so parse it out
          * of the SizeOfImage field in the PE header and return it */
@@ -684,20 +746,20 @@ EFI_STATUS pe_kernel_check_no_relocation(const void *base) {
 
 EFI_STATUS pe_section_table_from_base(
                 const void *base,
+                size_t base_len,
                 const PeSectionHeader **ret_section_table,
-                size_t *ret_n_section_table) {
+                size_t *ret_n_section_table,
+                size_t *ret_size_in_memory) {
 
         assert(base);
         assert(ret_section_table);
         assert(ret_n_section_table);
 
-        const DosFileHeader *dos = (const DosFileHeader*) base;
-        if (!verify_dos(dos))
-                return EFI_LOAD_ERROR;
-
-        const PeFileHeader *pe = (const PeFileHeader*) ((const uint8_t*) base + dos->ExeHeader);
-        if (!verify_pe(dos, pe, /* allow_compatibility= */ false))
-                return EFI_LOAD_ERROR;
+        const DosFileHeader *dos;
+        const PeFileHeader *pe;
+        EFI_STATUS err = pe_headers_from_base(base, base_len, /* allow_compatibility= */ false, &dos, &pe);
+        if (err != EFI_SUCCESS)
+                return err;
 
         assert_cc(sizeof(pe->FileHeader.NumberOfSections) == sizeof(uint16_t)); /* multiplication below cannot overflow */
 
@@ -705,14 +767,22 @@ EFI_STATUS pe_section_table_from_base(
         if (n_section_table * sizeof(PeSectionHeader) > SECTION_TABLE_BYTES_MAX)
                 return EFI_OUT_OF_RESOURCES;
 
+        /* Make sure the section table lies within the buffer, so consumers iterating it don't read off the
+         * end. */
+        if (!pe_section_table_in_bounds(dos, pe, base_len))
+                return EFI_LOAD_ERROR;
+
         *ret_section_table = (const PeSectionHeader*) ((const uint8_t*) base + section_table_offset(dos, pe));
         *ret_n_section_table = n_section_table;
+        if (ret_size_in_memory)
+                *ret_size_in_memory = pe->OptionalHeader.SizeOfImage;
 
         return EFI_SUCCESS;
 }
 
 EFI_STATUS pe_memory_locate_sections(
                 const void *base,
+                size_t base_len,
                 const char *const section_names[],
                 PeSectionVector sections[]) {
 
@@ -723,8 +793,8 @@ EFI_STATUS pe_memory_locate_sections(
         assert(sections);
 
         const PeSectionHeader *section_table;
-        size_t n_section_table;
-        err = pe_section_table_from_base(base, &section_table, &n_section_table);
+        size_t n_section_table, size_in_memory;
+        err = pe_section_table_from_base(base, base_len, &section_table, &n_section_table, &size_in_memory);
         if (err != EFI_SUCCESS)
                 return err;
 
@@ -733,6 +803,7 @@ EFI_STATUS pe_memory_locate_sections(
                         n_section_table,
                         section_names,
                         PTR_TO_SIZE(base),
+                        size_in_memory,
                         sections);
 
         return EFI_SUCCESS;
@@ -741,7 +812,8 @@ EFI_STATUS pe_memory_locate_sections(
 EFI_STATUS pe_section_table_from_file(
                 EFI_FILE *handle,
                 PeSectionHeader **ret_section_table,
-                size_t *ret_n_section_table) {
+                size_t *ret_n_section_table,
+                size_t *ret_size_in_memory) {
 
         EFI_STATUS err;
         size_t len;
@@ -795,5 +867,7 @@ EFI_STATUS pe_section_table_from_file(
 
         *ret_section_table = TAKE_PTR(section_table);
         *ret_n_section_table = n_section_table;
+        if (ret_size_in_memory)
+                *ret_size_in_memory = pe.OptionalHeader.SizeOfImage;
         return EFI_SUCCESS;
 }
