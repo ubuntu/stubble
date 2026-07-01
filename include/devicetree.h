@@ -32,6 +32,7 @@ typedef struct FdtHeader {
 
 bool firmware_devicetree_exists(void);
 const char* devicetree_get_compatible(const void *dtb);
+const char* devicetree_get_model(const void *dtb);
 EFI_STATUS devicetree_match(const void *uki_dtb, size_t uki_dtb_length);
 EFI_STATUS devicetree_match_by_compatible(const void *uki_dtb, size_t uki_dtb_length, const char *compat);
 EFI_STATUS devicetree_install_from_memory(

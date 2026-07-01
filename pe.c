@@ -141,6 +141,15 @@ typedef struct PeFileHeader {
 
 #define SECTION_TABLE_BYTES_MAX (16U * 1024U * 1024U)
 
+static void pe_locate_sections_internal(
+                const PeSectionHeader section_table[],
+                size_t n_section_table,
+                const char *const section_names[],
+                size_t validate_base,
+                const void *device_table,
+                const Device *device,
+                PeSectionVector sections[]);
+
 static bool verify_dos(const DosFileHeader *dos) {
         assert(dos);
 
@@ -194,11 +203,201 @@ static bool pe_section_name_equal(const char *a, const char *b) {
         return true;
 }
 
+static const char* skip_whitespace(const char *p, const char *end) {
+        while (p < end && (*p == ' ' || *p == '\t'))
+                p++;
+        return p;
+}
+
+/**
+ * get_prop_end() - Determine the length of a machdb property value
+ * @p: Pointer to the start of the property value (e.g. right after the "Compatible:" keyword)
+ * @end: Pointer to the end of the machdb section (i.e. one past its last byte)
+ *
+ * The value pointed to by @p ends at whichever comes first: the line feed or NUL byte terminating
+ * the current line, or @end (the end of the machdb section). Any whitespace (space or tab), and a
+ * trailing carriage return, immediately preceding that point are not considered part of the value.
+ *
+ * Return: the length of the property value, in bytes, excluding any trailing line feed, NUL byte,
+ * carriage return, or whitespace.
+ */
+static size_t get_prop_end(const char *p, const char *end) {
+        assert(p);
+        assert(end >= p);
+
+        const char *e = p;
+
+        /* Find the end of the line: either a line feed, a NUL byte, or the end of the section */
+        while (e < end && *e != '\n' && *e != '\0')
+                e++;
+
+
+        /* Trim any trailing whitespace (and a trailing carriage return) before that point */
+        while (e > p && (e[-1] == ' ' || e[-1] == '\t' || e[-1] == '\r'))
+                e--;
+
+        return (size_t) (e - p);
+}
+
+/**
+ * machdb_lookup_model() - Look up the Compatible: value for a given Model: in a machdb section
+ * @machdb: Pointer to the start of the .machdb section
+ * @machdb_size: Size of the .machdb section
+ * @model: The firmware devicetree's /model property to look up
+ * @ret_compatible: On success, set to point at the start of the (not NUL-terminated) compatible
+ *                  string within @machdb. Set to NULL if no matching entry is found.
+ *
+ * The .machdb section has the format:
+ *   Model: <model_string>
+ *   ...
+ *   Compatible: <compatible_string>
+ *
+ * There can be multiple "Model:" entries before a "Compatible:" entry.
+ *
+ * Return: the length of the compatible string pointed to by *ret_compatible (excluding any
+ * trailing line feed, carriage return, or whitespace), or 0 if no matching entry was found.
+ */
+static size_t machdb_lookup_model(
+                const char *machdb,
+                size_t machdb_size,
+                const char *model,
+                const char **ret_compatible) {
+
+        assert(ret_compatible);
+
+        *ret_compatible = NULL;
+
+        if (!machdb || !model || machdb_size == 0)
+                return 0;
+
+        const char *cursor = machdb;
+        const char *end = machdb + machdb_size;
+        bool model_matched = false;
+
+        while (cursor < end) {
+                const char *line_start = cursor;
+                const char *line_end = cursor;
+
+                while (line_end < end && *line_end != '\n' && *line_end != '\r' && *line_end != '\0')
+                        line_end++;
+
+                const char *p = skip_whitespace(line_start, line_end);
+
+                /* Check if line starts with "Model:" */
+                if (line_end - p >= 8 && strncmp8(p, "Model:", 6) == 0) {
+                        p = skip_whitespace(p + 6, line_end);
+
+                        /* Compare with the model we're looking for */
+                        size_t model_len = strlen8(model);
+                        if ((size_t)(line_end - p) >= model_len && strncmp8(p, model, model_len) == 0) {
+                                /* Make sure we have an exact match (followed by whitespace or end of line) */
+                                if (p + model_len == line_end || p[model_len] == ' ' || p[model_len] == '\t')
+                                        model_matched = true;
+                        }
+                }
+                /* Check if line starts with "Compatible:" - only if we matched a machine */
+                else if (model_matched && line_end - p >= 11 && strncmp8(p, "Compatible:", 11) == 0) {
+                        p = skip_whitespace(p + 11, line_end);
+
+                        /* Bound the value: it ends at the line feed or the end of the section,
+                         * whichever comes first, with trailing whitespace trimmed off. */
+                        size_t compatible_len = get_prop_end(p, end);
+                        if (compatible_len == 0)
+                                return 0;
+
+                        *ret_compatible = p;
+                        log_debug("Found compatible '%.*s' for model '%s'", (int) compatible_len, p, model);
+                        return compatible_len;
+                }
+
+                cursor = line_end;
+                while (cursor < end && (*cursor == '\n' || *cursor == '\r'))
+                        cursor++;
+        }
+
+        log_debug("No machdb entry for model '%s'", model);
+        return 0;
+}
+
+/**
+ * pe_machdb() - Match device-tree using /model property and machdb lookup table
+ *
+ * @fw_dtb:             firmware device-tree
+ * @uki_dtb:            device-tree to check
+ * @uki_dtb_size:       size of device-tree
+ * @section_table:      PE section table to search for .machdb section
+ * @n_section_table:    number of entries in the section table
+ * @validate_base:      base address for validation and pointer calculations
+ *
+ * This function implements device-tree matching based on the /model property from
+ * the firmware-provided device-tree. It searches for a .machdb section in the PE
+ * image, which contains Model: and Compatible: mappings. If the firmware device-tree's
+ * /model property matches a Model: entry, the corresponding Compatible: value is compared
+ * with the compatible string of the provided DTB.
+ *
+ * Return: true if this DTB should be used based on model matching, false otherwise.
+ */
+static bool pe_machdb(
+                const void *fw_dtb,
+                const void *uki_dtb,
+                size_t uki_dtb_size,
+                const PeSectionHeader section_table[],
+                size_t n_section_table,
+                size_t validate_base) {
+
+        assert(uki_dtb);
+        assert(section_table || n_section_table == 0);
+
+        static const char *const machdb_section_names[] = { ".machdb", NULL };
+        PeSectionVector machdb_section[1] = {};
+
+        pe_locate_sections_internal(
+                        section_table,
+                        n_section_table,
+                        machdb_section_names,
+                        validate_base,
+                        /* device_table */ NULL,
+                        /* device */ NULL,
+                        machdb_section);
+
+        if (!PE_SECTION_VECTOR_IS_SET(machdb_section))
+                return false;
+
+        const char *machdb = (const char *) SIZE_TO_PTR(validate_base) + machdb_section[0].memory_offset;
+        size_t machdb_size = machdb_section[0].memory_size;
+
+        const char *fw_model = devicetree_get_model(fw_dtb);
+        if (!fw_model)
+                return false;
+
+        const char *compatible;
+        size_t compatible_len = machdb_lookup_model(machdb, machdb_size, fw_model, &compatible);
+        if (compatible_len == 0)
+                return false;
+
+        const char *uki_compat = devicetree_get_compatible(uki_dtb);
+        if (!uki_compat)
+                return false;
+
+        log_debug("Compatible string from UKI '%s', compatible from machdb '%.*s'",
+                        uki_compat, (int) compatible_len, compatible);
+
+        if (strlen8(uki_compat) == compatible_len && strneq8(uki_compat, compatible, compatible_len)) {
+                log_debug("selecting device-tree %s based on model", uki_compat);
+                return true;
+        }
+
+        return false;
+}
+
 static bool pe_use_this_dtb(
                 const void *dtb,
                 size_t dtb_size,
                 const void *base,
                 const Device *device,
+                const PeSectionHeader section_table[],
+                size_t n_section_table,
+                size_t validate_base,
                 size_t section_nb) {
 
         assert(dtb);
@@ -212,14 +411,19 @@ static bool pe_use_this_dtb(
                                         devicetree_get_compatible(dtb));
                         return true;
                 }
-                if (err != EFI_UNSUPPORTED)
+                if (err == EFI_INVALID_PARAMETER)
                         return false;
         }
 
-        /* Do nothing if a firmware dtb exists */
+        /* Check if a firmware dtb exists */
         const void *fw_dtb = find_configuration_table(MAKE_GUID_PTR(EFI_DTB_TABLE));
-        if (fw_dtb)
+        if (fw_dtb) {
+                /* Try machine matching via machdb if available */
+                if (pe_machdb(fw_dtb, dtb, dtb_size, section_table,
+                              n_section_table, validate_base))
+                        return true;
                 return false;
+        }
 
         /* There's nothing to match against if there is no .hwids section */
         if (!device || !base)
@@ -296,6 +500,9 @@ static void pe_locate_sections_internal(
                                                   j->VirtualSize,
                                                   device_table,
                                                   device,
+                                                  section_table,
+                                                  n_section_table,
+                                                  validate_base,
                                                   (PTR_TO_SIZE(j) - PTR_TO_SIZE(section_table)) / sizeof(*j)))
                                         continue;
                         }

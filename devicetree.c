@@ -62,7 +62,7 @@ static EFI_STATUS devicetree_fixup(struct devicetree_state *state, size_t len) {
         return err;
 }
 
-const char* devicetree_get_compatible(const void *dtb) {
+static const char* devicetree_get_property(const void *dtb, const char *property_name) {
         if ((uintptr_t) dtb % alignof(FdtHeader) != 0)
                 return NULL;
 
@@ -96,6 +96,7 @@ const char* devicetree_get_compatible(const void *dtb) {
 
         size_t size_words = struct_size / sizeof(uint32_t);
         size_t len, name_off, len_words, s;
+        size_t property_name_len = strlen8(property_name);
 
         for (size_t i = 0; i < size_words; i++) {
                 switch (be32toh(cursor[i])) {
@@ -113,8 +114,8 @@ const char* devicetree_get_compatible(const void *dtb) {
                         name_off = be32toh(cursor[++i]);
                         len_words = DIV_ROUND_UP(len, sizeof(uint32_t));
 
-                        if (ADD_SAFE(&s, name_off, STRLEN("compatible")) &&
-                            s < strings_size && streq8(strings_block + name_off, "compatible")) {
+                        if (ADD_SAFE(&s, name_off, property_name_len) &&
+                            s < strings_size && streq8(strings_block + name_off, property_name)) {
                                 const char *c = (const char *) &cursor[++i];
                                 if (len == 0 || i + len_words > size_words || c[len - 1] != '\0')
                                         c = NULL;
@@ -129,6 +130,14 @@ const char* devicetree_get_compatible(const void *dtb) {
         }
 
         return NULL;
+}
+
+const char* devicetree_get_compatible(const void *dtb) {
+        return devicetree_get_property(dtb, "compatible");
+}
+
+const char* devicetree_get_model(const void *dtb) {
+        return devicetree_get_property(dtb, "model");
 }
 
 bool firmware_devicetree_exists(void) {
