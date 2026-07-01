@@ -26,7 +26,7 @@ If a match is found it loads the corresponding device tree from the
 ## Dependencies
 
 ```
-# apt install python3-pyelftools systemd-ukify
+# apt install python3-pyelftools python3-pefile
 ```
 
 ## Building
@@ -86,6 +86,8 @@ single `Compatible:` entry. The `Compatible:` value must match the compatible
 string of one of the appended device-trees. Whitespace after the labels is
 ignored.
 
+Use parameter --machdb <file> for stubblify.
+
 ### 4. Fallback to pre-installed device-tree
 
 If none of the above methods select a device-tree, the firmware-provided
@@ -100,7 +102,7 @@ to the Stubble stub.
 For a simple combined kernel+stubble image bundling a single DTB you can run:
 
 ```
-$ ukify build --linux=/boot/vmlinuz --stub=stubble.efi --hwids=hwids/json \
+$ stubblify build --linux=/boot/vmlinuz --stub=stubble.efi --hwids=hwids/json \
 --devicetree-auto=/boot/dtb --output=vmlinuz.efi
 ```
 
@@ -109,7 +111,7 @@ Add more `--device-tree-auto=` parameters for further device-trees.
 To enable model-based device-tree matching via machdb, add the `--machdb` parameter:
 
 ```
-$ ukify build --linux=/boot/vmlinuz --stub=stubble.efi --hwids=hwids/json \
+$ stubblify build --linux=/boot/vmlinuz --stub=stubble.efi --hwids=hwids/json \
 --devicetree-auto=/boot/dtb1 --devicetree-auto=/boot/dtb2 \
 --machdb=machdb.txt --output=vmlinuz.efi
 ```
