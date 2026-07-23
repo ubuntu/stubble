@@ -40,6 +40,7 @@ install: stubble.efi stubblify
 	install -m 644 -t ${DESTDIR}${PREFIX}/lib/stubble stubble.efi
 	install -m 755 -d ${DESTDIR}${PREFIX}/share/stubble/hwids
 	install -m 644 -t ${DESTDIR}${PREFIX}/share/stubble/hwids hwids/json/*
+	install -m 644 -t ${DESTDIR}${PREFIX}/share/stubble machdb.txt
 
 clean:
 	rm -f $(OBJS)

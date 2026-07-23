@@ -1,0 +1,11 @@
+Model: spacemit k3_com260_ifx board
+Compatible: spacemit,k3-com260-ifx
+
+Model: spacemit k3 com260 ifx board
+Compatible: spacemit,k3-com260-ifx
+
+Model: spacemit k3-deepcomputing-fml13v05 board
+Compatible: deepcomputing,fml13v05
+
+Model: spacemit k3-pico-itx board
+Compatible: spacemit,k3-pico-itx
