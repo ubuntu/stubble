@@ -8,7 +8,7 @@ import re
 import json
 import sys
 
-guid_regexp = re.compile(r'\{[0-9a-f]{8}-[0-9a-f]{4}-[0-5][0-9a-f]{3}-[089ab][0-9a-f]{3}-[0-9a-f]{12}\}', re.I)
+guid_regexp = re.compile(r'.*([0-9a-f]{8}-[0-9a-f]{4}-[0-5][0-9a-f]{3}-[089ab][0-9a-f]{3}-[0-9a-f]{12})', re.I)
 filter_regexp = re.compile(r".*<- (Manufacturer \+ EnclosureKind|Manufacturer \+ Family|Manufacturer|Manufacturer \+ BiosVendor|Manufacturer \+ BaseboardManufacturer \+ BaseboardProduct)$")
 
 def parse_hwid_file(hwid_file: Path, inpath: Path, outpath: Path) -> None:
@@ -40,7 +40,7 @@ def parse_hwid_file(hwid_file: Path, inpath: Path, outpath: Path) -> None:
                 continue
             guid = guid_regexp.match(line)
             if guid is not None:
-                uuid = UUID(guid.group(0)[1:-1])
+                uuid = UUID(guid.group(1))
                 if uuid not in guids:
                     guids.append(uuid)
 
