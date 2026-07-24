@@ -1,0 +1,18 @@
+TYPE    INPUT     CHID
+   1 MFP---BvRr-- 5b6d366d-9a43-536d-9637-8e47abfb8e63
+   2 M-P---BvRr-- 40ce3633-a61c-59ae-8336-6d861b933733
+   5 MFP--------- 9aca06aa-73c1-5b12-9bdb-d88c0111910c
+   8 M-P-mp------ ef65dda1-fabb-5a20-9f5b-173b9876cf17
+   9 M-P--------- 176f35e1-a53c-5823-85ec-0e69ddccc718
+  10 MF--mp------ aa97280b-2a64-5146-8cf5-1ab4cff4f4f7
+  11 MF---------- 8d1e50f4-5fca-5e73-91f3-21e46a9419ab
+  12 M---------e- a29d04c1-686b-5861-9ff7-cadf33cbcb97
+  13 M---mp------ e2bb821e-aeef-5cfc-a062-392f2539fd67
+  14 M----------- c4e7b7b9-2520-5397-8040-8ac279f540d8
+ext0 MFP--------E ab022687-b75a-5f75-a1c3-b3996e227c96
+ext1 MF---------E d8bcee6b-2797-55ca-86b7-d69170e86bbb
+
+LEGEND: M → manufacturer (ASUS) ┄ F → family (Zenbook A16) ┄ P → product-name (Zenbook A16 UX3607OA)
+        S → product-sku (n/a) ┄ m → baseboard-manufacturer (ASUSTeK COMPUTER INC.)
+        p → baseboard-product (UX3607OA) ┄ B → bios-vendor (Insyde) ┄ v → bios-version (UX3607OA.312)
+        R → bios-major (03) ┄ r → bios-minor (12) ┄ e → enclosure-type (a) ┄ E → edid-panel (SDC422c)
