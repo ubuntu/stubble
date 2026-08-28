@@ -3,7 +3,7 @@
 
 #include "efi.h"
 
-extern bool dtb_override;
+extern bool dtb_autodetect;
 
 /* This is the actual PE format of the section header */
 typedef struct PeSectionHeader {
