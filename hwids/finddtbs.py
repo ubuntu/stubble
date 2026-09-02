@@ -21,6 +21,16 @@ def collect_compats(jsondir: Path):
             compats.append(j['compatible'])
     return compats
 
+def collect_machdb_compats(machdb_file: Path):
+    # A machdb Compatible: target names a DTB to embed, hwids entry or not
+    compats = []
+    with open(machdb_file, 'r', encoding='utf-8') as f:
+        for line in f:
+            key, _, value = line.partition(':')
+            if key.strip() == 'Compatible':
+                compats.append(value.strip())
+    return compats
+
 def find_dtbs(dtbdir: Path, compatibles_in: list[str]):
     files = []
     dtb_files = dtbdir.glob('**/*[!el2].dtb')
@@ -45,6 +55,9 @@ if len(sys.argv) > 2:
     jsondir = Path(sys.argv[2])
 
 compats = collect_compats(jsondir)
+# sys.argv[3] is a machdb file
+if len(sys.argv) > 3 and sys.argv[3]:
+    compats += collect_machdb_compats(Path(sys.argv[3]))
 dtb_paths = find_dtbs(dtbdir, compats)
 for p in dtb_paths:
     print("{}".format(p))
