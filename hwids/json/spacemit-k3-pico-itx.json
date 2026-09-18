@@ -1,0 +1,22 @@
+{
+    "type": "devicetree",
+    "name": "SpacemiT K3 Pico-ITX",
+    "compatible": "spacemit,k3-pico-itx",
+    "hwids": [
+        "9aeac2a1-4fdd-579d-8c89-d3daa24d3cec",
+        "eeafca70-ba60-5339-b118-1094a42d8cdc",
+        "3dbeeeb7-2c7b-5351-a812-c76d5c5aa5d4",
+        "b0ae3ea4-8972-5d5e-9180-262b3b962f33",
+        "ad85f599-6734-5e57-a52e-0ffe1381a42e",
+        "7ba0d5a2-aa65-5861-9f5d-26918c908aa1",
+        "bc741b1f-c75a-5c65-a84d-c44986790500",
+        "00a02b12-5411-5b63-844a-92b7635669c1",
+        "9a882f98-62f1-5e8e-8005-8144a6eba91d",
+        "affcfd06-63cb-542a-bd39-a5f464403030",
+        "418d6c3c-8f02-5c39-8959-231226252338",
+        "1f340263-9ead-5032-b58e-34724cd1fb57",
+        "0f30489d-deaa-5c01-b540-413ee62e4058",
+        "b5a3e6a0-eeb0-51a9-a867-3756c8728fc1",
+        "5d3f5730-2413-5f27-8023-295fe65e5145"
+    ]
+}

@@ -1,0 +1,33 @@
+Computer Information
+--------------------
+BiosVendor: SPACEMIT
+BiosVersion: .0.7+fix2-4
+BiosMajorRelease: 255
+BiosMinorRelease: 255
+BiosReleaseDate: 9/16/2026
+FirmwareMajorRelease: ff
+FirmwareMinorRelease: ff
+Manufacturer: SpacemiT
+Family: K3
+ProductName: k3-pico-itx
+ProductSku: MPK3
+EnclosureKind:
+BaseboardManufacturer: SpacemiT
+BaseboardProduct: k3-pico-itx
+Hardware IDs
+------------
+{9aeac2a1-4fdd-579d-8c89-d3daa24d3cec}   <- Manufacturer + Family + ProductName + ProductSku + BiosVendor + BiosVersion + BiosMajorRelease + BiosMinorRelease
+{eeafca70-ba60-5339-b118-1094a42d8cdc}   <- Manufacturer + Family + ProductName + BiosVendor + BiosVersion + BiosMajorRelease + BiosMinorRelease
+{3dbeeeb7-2c7b-5351-a812-c76d5c5aa5d4}   <- Manufacturer + ProductName + BiosVendor + BiosVersion + BiosMajorRelease + BiosMinorRelease
+{b0ae3ea4-8972-5d5e-9180-262b3b962f33}   <- Manufacturer + Family + ProductName + ProductSku + BaseboardManufacturer + BaseboardProduct
+{ad85f599-6734-5e57-a52e-0ffe1381a42e}   <- Manufacturer + Family + ProductName + ProductSku
+{7ba0d5a2-aa65-5861-9f5d-26918c908aa1}   <- Manufacturer + Family + ProductName
+{bc741b1f-c75a-5c65-a84d-c44986790500}   <- Manufacturer + ProductSku + BaseboardManufacturer + BaseboardProduct
+{00a02b12-5411-5b63-844a-92b7635669c1}   <- Manufacturer + ProductSku
+{9a882f98-62f1-5e8e-8005-8144a6eba91d}   <- Manufacturer + ProductName + BaseboardManufacturer + BaseboardProduct
+{affcfd06-63cb-542a-bd39-a5f464403030}   <- Manufacturer + ProductName
+{418d6c3c-8f02-5c39-8959-231226252338}   <- Manufacturer + Family + BaseboardManufacturer + BaseboardProduct
+{1f340263-9ead-5032-b58e-34724cd1fb57}   <- Manufacturer + Family
+{0f30489d-deaa-5c01-b540-413ee62e4058}   <- Manufacturer + EnclosureKind
+{b5a3e6a0-eeb0-51a9-a867-3756c8728fc1}   <- Manufacturer + BaseboardManufacturer + BaseboardProduct
+{5d3f5730-2413-5f27-8023-295fe65e5145}   <- Manufacturer
