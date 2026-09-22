@@ -41,6 +41,8 @@ install: stubble.efi stubblify
 	install -m 755 -d ${DESTDIR}${PREFIX}/share/stubble/hwids
 	install -m 644 -t ${DESTDIR}${PREFIX}/share/stubble/hwids hwids/json/*
 	install -m 644 -t ${DESTDIR}${PREFIX}/share/stubble machdb.txt
+	install -m 755 -d ${DESTDIR}/etc/kernel/install.d
+	install -m 755 -t ${DESTDIR}/etc/kernel/install.d kernel-install/95-dtb-loader.install
 
 clean:
 	rm -f $(OBJS)

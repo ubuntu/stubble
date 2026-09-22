@@ -1,0 +1,114 @@
+#!/bin/sh
+# Copyright (c) Qualcomm Technologies, Inc. and/or its subsidiaries.
+# SPDX-License-Identifier: BSD-3-Clause
+#
+# Windows on ARM systems such as Snapdragon laptops ship with an UEFI firmware
+# with an insufficient ACPI implementation for Linux and no device tree. Wrap
+# the EFI kernel image installed in the ESP: add a systemd-stub based DTB
+# loader, device trees of these machines, and boot firmware signatures (CHID).
+#
+# depends: stubble (for the finddtbs.py script), systemd-ukify (for the ukify
+# command), stubble | systemd-ukify (for the machine id databases)
+
+# This hook will wrap kernel images installed in the ESP with `systemd-stub`,
+# embedding the device trees from this kernel for the machines in the hardware
+# ID database (using data from systemd-boot and stubble), plus the database
+# itself.
+#
+# While ukify is called, it's not producing a full UKI as it's called with an
+# empty --os-release, which suppresses the .osrel section, and no --initrd or
+# --cmdline. kernel-install identifies a UKI by .osrel, so the result is
+# handled as an ordinary kernel image and keeps a normal Type #1 boot loader
+# entry, a host-generated initrd and an editable command line.
+
+set -e
+
+# kernel-install calls with these args:
+#     add KERNEL-VERSION $BOOT/ENTRY-TOKEN/KERNEL-VERSION/ KERNEL-IMAGE \
+#         [INITRD-FILE ...]
+COMMAND="${1:?}"
+KERNEL_VERSION="${2:?}"
+ENTRY_DIR_ABS="${3:?}"
+KERNEL_IMAGE="$4"
+# $5 and later are initrds which we don't postprocess
+
+[ "$COMMAND" = "add" ] || exit 0
+
+log() {
+    if [ "${KERNEL_INSTALL_VERBOSE:-0}" -gt 0 ]; then
+        echo "$*" >&2
+    fi
+}
+
+fatal_w() {
+    log "Warning: $*. Not embedding device trees."
+    exit 0
+}
+
+# With layout=auto or no layout set, recent kernel-install will set the layout
+# to bls when installing kernels that use UAPI.1 Boot Loader Specification[2]
+# Type #1 layout which is the only case where the post-processing done here is
+# useful.
+if [ "$KERNEL_INSTALL_LAYOUT" != "bls" ]; then
+    fatal_w "KERNEL_INSTALL_LAYOUT=${KERNEL_INSTALL_LAYOUT} (!= bls)"
+fi
+
+# 90-loaderentry.install has already copied the kernel to ENTRY_DIR_ABS and
+# pointed the entry at it; replace it in place with the wrapped image.
+KERNEL_DEST="$ENTRY_DIR_ABS/linux"
+[ -n "$KERNEL_IMAGE" ] || KERNEL_IMAGE="$KERNEL_DEST"
+
+# Prefer stubble's hardware ID database which is currently being released more
+# frequently than systemd.
+# TODO Should we load from both databases? Perhaps a patch to finddtbs.py
+# would make this nicer for everyone.
+for dir in /usr/share/stubble/hwids /usr/lib/systemd/boot/hwids/aa64; do
+    if [ -d "$dir" ]; then
+        HWIDS="$dir"
+        break
+    fi
+done
+if [ -z "${HWIDS:-}" ]; then
+    fatal_w "No hardware ID database found; install stubble or systemd-ukify"
+fi
+
+if ! command -v ukify >/dev/null; then
+    fatal_w "ukify not found; install systemd-ukify"
+fi
+
+FINDDTBS=/usr/libexec/stubble/finddtbs.py
+if [ ! -x "$FINDDTBS" ]; then
+    fatal_w "$FINDDTBS not found; install stubble"
+fi
+
+DTB_DIR="/usr/lib/linux-image-${KERNEL_VERSION}"
+if [ ! -d "$DTB_DIR" ]; then
+    fatal_w "$DTB_DIR does not exist"
+fi
+
+DTBS=$("$FINDDTBS" "$DTB_DIR" "$HWIDS")
+
+# finddtbs might return an empty output when this kernel carries no device
+# tree for any machine in the database.
+if [ -z "$DTBS" ]; then
+    fatal_w "No device tree in $DTB_DIR matches $HWIDS"
+fi
+
+set --
+for dtb in $DTBS; do
+    set -- "$@" --devicetree-auto="$dtb"
+done
+
+log "Embedding $# device trees from $DTB_DIR into $KERNEL_DEST"
+
+ukify build \
+    --linux="$KERNEL_IMAGE" \
+    --uname="$KERNEL_VERSION" \
+    --os-release= \
+    --hwids="$HWIDS" \
+    "$@" \
+    --output="$KERNEL_DEST.tmp"
+
+chmod 644 "$KERNEL_DEST.tmp"
+chown root:root "$KERNEL_DEST.tmp" || :
+mv "$KERNEL_DEST.tmp" "$KERNEL_DEST"
