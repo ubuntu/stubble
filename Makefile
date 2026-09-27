@@ -13,6 +13,9 @@ endif
 ifeq ($(ARCH),aarch64)
 	CFLAGS += -mgeneral-regs-only
 endif
+ifeq ($(ARCH),riscv64)
+	CFLAGS += -march=rv64gc -mabi=lp64d -mcmodel=medany
+endif
 
 OBJS = devicetree.o efi-log.o efi-efivars.o efi-string.o linux.o stub.o util.o uki.o smbios.o initrd.o \
 	pe.o chid.o edid.o secure-boot.o sha1.o measure.o
