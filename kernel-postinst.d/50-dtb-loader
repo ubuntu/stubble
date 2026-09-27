@@ -1,0 +1,104 @@
+#!/bin/sh
+# Copyright (c) Qualcomm Technologies, Inc. and/or its subsidiaries.
+# SPDX-License-Identifier: BSD-3-Clause
+#
+# Windows on ARM systems such as Snapdragon laptops ship with an UEFI firmware
+# with an insufficient ACPI implementation for Linux and no device tree. Wrap
+# the kernel image just installed in /boot: add a systemd-stub based DTB
+# loader, device trees of these machines, and boot firmware signatures (CHID).
+#
+# depends: stubble (for the finddtbs.py script), systemd-ukify (for the ukify
+# command), stubble | systemd-ukify (for the machine id databases)
+
+# This hook will wrap an image that was just installed to /boot with a DTB
+# loader in front.
+#
+# While ukify is called, it's not producing a full UKI as it's called with an
+# empty --os-release, which suppresses the .osrel section, and no --initrd or
+# --cmdline. The result stays an ordinary kernel image, so e.g. GRUB keeps
+# generating a normal menu entry for it, with a host-generated initrd and an
+# editable command line.
+
+set -e
+
+# /etc/kernel/postinst.d/ hooks are called with these args:
+#     KERNEL-VERSION [KERNEL-IMAGE]
+KERNEL_VERSION="${1:?}"
+KERNEL_IMAGE="${2:-/boot/vmlinuz-$KERNEL_VERSION}"
+
+PROG="${0##*/}"
+
+fatal_w() {
+    echo "$PROG: warning: $*. Not embedding device trees." >&2
+    exit 0
+}
+
+if ! [ -f "$KERNEL_IMAGE" ]; then
+    fatal_w "$KERNEL_IMAGE does not exist"
+fi
+
+if ! command -v ukify >/dev/null; then
+    fatal_w "ukify not found; install systemd-ukify"
+fi
+
+# Wrapping an already wrapped image would nest a second stub, and a real UKI
+# (.osrel) is not ours to post-process. Unlike the kernel-install hook, which
+# always starts from a freshly copied image, this one rewrites the file in
+# place and so has to stay idempotent.
+if ukify inspect "$KERNEL_IMAGE" 2>/dev/null | grep -Eq '^\.(hwids|osrel):'; then
+    fatal_w "Wrapper already present on $KERNEL_IMAGE"
+fi
+
+# Prefer stubble's hardware ID database which is currently being released more
+# frequently than systemd.
+# TODO Should we load from both databases? Perhaps a patch to finddtbs.py
+# would make this nicer for everyone.
+for dir in /usr/share/stubble/hwids /usr/lib/systemd/boot/hwids/aa64; do
+    if [ -d "$dir" ]; then
+        HWIDS="$dir"
+        break
+    fi
+done
+if [ -z "${HWIDS:-}" ]; then
+    fatal_w "No hardware ID database found; install stubble or systemd-ukify"
+fi
+
+FINDDTBS=/usr/libexec/stubble/finddtbs.py
+if [ ! -x "$FINDDTBS" ]; then
+    fatal_w "$FINDDTBS not found; install stubble"
+fi
+
+DTB_DIR="/usr/lib/linux-image-${KERNEL_VERSION}"
+if [ ! -d "$DTB_DIR" ]; then
+    fatal_w "$DTB_DIR does not exist"
+fi
+
+DTBS=$("$FINDDTBS" "$DTB_DIR" "$HWIDS")
+
+# finddtbs might return an empty output when this kernel carries no device
+# tree for any machine in the database.
+if [ -z "$DTBS" ]; then
+    fatal_w "No device tree in $DTB_DIR matches $HWIDS"
+fi
+
+set --
+for dtb in $DTBS; do
+    set -- "$@" --devicetree-auto="$dtb"
+done
+
+echo "$PROG: embedding $# device trees from $DTB_DIR into $KERNEL_IMAGE"
+
+# Build beside the target and rename, so a failure or a crash leaves the
+# bootable image that is already in place untouched.
+KERNEL_TMP="$KERNEL_IMAGE.stubble.tmp"
+trap 'rm -f "$KERNEL_TMP"' EXIT HUP INT TERM
+
+ukify build \
+    --linux="$KERNEL_IMAGE" \
+    --uname="$KERNEL_VERSION" \
+    --os-release= \
+    --hwids="$HWIDS" \
+    "$@" \
+    --output="$KERNEL_TMP"
+
+mv "$KERNEL_TMP" "$KERNEL_IMAGE"

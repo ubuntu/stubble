@@ -45,6 +45,8 @@ install: stubble.efi stubblify
 	install -m 644 -t ${DESTDIR}${PREFIX}/share/stubble machdb.txt
 	install -m 755 -d ${DESTDIR}/etc/kernel/install.d
 	install -m 755 -t ${DESTDIR}/etc/kernel/install.d kernel-install/95-dtb-loader.install
+	install -m 755 -d ${DESTDIR}/etc/kernel/postinst.d
+	install -m 755 -t ${DESTDIR}/etc/kernel/postinst.d kernel-postinst.d/50-dtb-loader
 
 clean:
 	rm -f $(OBJS)
