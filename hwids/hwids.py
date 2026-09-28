@@ -86,7 +86,7 @@ def main():
         (9,  [m, p],               "Manufacturer + ProductName"),
         (10, [m, f, bv, bn],       "Manufacturer + Family + BaseboardManufacturer + BaseboardProduct"),
         (11, [m, f],               "Manufacturer + Family"),
-        (11, [m, c],               "Manufacturer + EnclosureKind"),
+        (12, [m, c],               "Manufacturer + EnclosureKind"),
         (13, [m, bv, bn],          "Manufacturer + BaseboardManufacturer + BaseboardProduct"),
         (14, [m],                  "Manufacturer"),
         (15, [m, f, p, e],         "Manufacturer + Family + ProductName + EDID"),
