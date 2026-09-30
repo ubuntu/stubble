@@ -7,13 +7,16 @@ MIN_SECTIONS?=2048
 include ./Make.defaults
 
 ifeq ($(ARCH),x86_64)
+	EFI_ARCH = x64
 	CFLAGS += -m64 -march=x86-64 -mno-red-zone -mgeneral-regs-only -maccumulate-outgoing-args
 	LDFLAGS += -m64
 endif
 ifeq ($(ARCH),aarch64)
+	EFI_ARCH = aa64
 	CFLAGS += -mgeneral-regs-only
 endif
 ifeq ($(ARCH),riscv64)
+	EFI_ARCH = riscv64
 	CFLAGS += -march=rv64gc -mabi=lp64d -mcmodel=medany
 endif
 
