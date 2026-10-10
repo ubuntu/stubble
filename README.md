@@ -21,7 +21,8 @@ If a match is found it loads the corresponding device tree from the
 ## Command-line parameters
 
 - `debug`: Enable debug logging
-- `stubble.dtb_override=true/false`: Enable or disable device-tree compat based dtb lookup. The default is `true`.
+- `stubble.dtb_autodetect=true/false`: Enable or disable device-tree compat based dtb lookup. The default is `true`.
+- `stubble.dtb_override=true/false`: Deprecated, same as stubble.dtb_autodetect. Kept for backward compatability.
 
 ## Dependencies
 
