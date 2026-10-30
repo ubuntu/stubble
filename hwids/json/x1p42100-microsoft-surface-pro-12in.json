@@ -1,7 +1,7 @@
 {
     "type": "devicetree",
     "name": "Microsoft Corporation Surface",
-    "compatible": "microsoft,sp12",
+    "compatible": "microsoft,surface-pro-12in",
     "hwids": [
         "38f75a5d-c3fc-5306-bb2e-bbb516e1ea91",
         "57ba7c1d-8e88-59a9-82c9-044e765788e7",
