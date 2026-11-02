@@ -1,0 +1,33 @@
+Computer Information
+--------------------
+BiosVendor: Insyde
+BiosVersion: X1607QA.306
+BiosMajorRelease: 3
+BiosMinorRelease: 10
+BiosReleaseDate: 9/01/2025
+FirmwareMajorRelease: 03
+FirmwareMinorRelease: 04
+Manufacturer: ASUSTeK COMPUTER INC.
+Family: ASUS Vivobook 16
+ProductName: ASUS Vivobook 16 X1607QA_F1607QA
+ProductSku: 
+EnclosureKind: a
+BaseboardManufacturer: ASUSTeK COMPUTER INC.
+BaseboardProduct: X1607QA
+Hardware IDs
+------------
+{575f89c7-eaa4-5bf8-a571-1b9615ea78e4}   <- Manufacturer + Family + ProductName + ProductSku + BiosVendor + BiosVersion + BiosMajorRelease + BiosMinorRelease
+{9d6bac45-8ab0-5789-b5df-15c064e0b54f}   <- Manufacturer + Family + ProductName + BiosVendor + BiosVersion + BiosMajorRelease + BiosMinorRelease
+{dff2d806-454f-5a52-996f-ec31d55fe370}   <- Manufacturer + ProductName + BiosVendor + BiosVersion + BiosMajorRelease + BiosMinorRelease
+{24e7639a-98e4-5818-8110-89f6c9644653}   <- Manufacturer + Family + ProductName + ProductSku + BaseboardManufacturer + BaseboardProduct
+{0907e64a-f34d-5e39-8b5f-c72367b31c36}   <- Manufacturer + Family + ProductName + ProductSku
+{9895604a-d3b3-52b5-ad37-a5c741de1b0b}   <- Manufacturer + Family + ProductName
+{21532707-d3e4-57d9-a215-4a02d90abe39}   <- Manufacturer + ProductSku + BaseboardManufacturer + BaseboardProduct
+{24652d54-00f4-59ae-96fb-f7adbfa4a939}   <- Manufacturer + ProductSku
+{9ddffa55-b50a-59a2-85f8-3fe038d9fd22}   <- Manufacturer + ProductName + BaseboardManufacturer + BaseboardProduct
+{ef3ad04c-cb6b-5981-a15a-71c7ee95190e}   <- Manufacturer + ProductName
+{f8d95087-670f-5015-987f-7cad2ecde912}   <- Manufacturer + Family + BaseboardManufacturer + BaseboardProduct
+{39d0e1b7-ec03-5105-a2c4-f601c0b91bb4}   <- Manufacturer + Family
+{665276be-80c5-5e5d-929f-fa85d18e2d50}   <- Manufacturer + EnclosureKind
+{53a54f34-7a5a-5001-a3dc-f92623b475d2}   <- Manufacturer + BaseboardManufacturer + BaseboardProduct
+{65605ed1-09e2-57aa-bd0f-a26c1d35433f}   <- Manufacturer
