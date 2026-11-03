@@ -1,0 +1,9 @@
+TYPE    INPUT     CHID
+   7 M--S-------- 66a91dc3-f343-5158-aca6-cda2b8948d86
+   9 M-P--------- 3ab1854e-11a7-5e4d-b264-5a95ad00598f
+  14 M----------- cc0aea32-ad2c-5013-8bed-cede6be8c9f4
+
+LEGEND: M → manufacturer (Microsoft Corporation) ┄ F → family (n/a) ┄ P → product-name (Surface Laptop 13in 1st Ed with Snapdragon)
+        S → product-sku (Surface_Laptop_13in_1st_Ed_with_Snapdragon_2095) ┄ m → baseboard-manufacturer (n/a)
+        p → baseboard-product (n/a) ┄ B → bios-vendor (n/a) ┄ v → bios-version (n/a)
+        R → bios-major (n/a) ┄ r → bios-minor (n/a) ┄ e → enclosure-type (n/a) ┄ E → edid-panel (n/a)
