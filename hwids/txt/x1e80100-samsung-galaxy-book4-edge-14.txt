@@ -1,0 +1,33 @@
+Computer Information
+--------------------
+BiosVendor: SAMSUNG ELECTRONICS CO., LTD.
+BiosVersion: P00ALC.061.260513.WY.1412
+BiosMajorRelease: 5
+BiosMinorRelease: 27
+BiosReleaseDate: 5/13/2026
+FirmwareMajorRelease: 01
+FirmwareMinorRelease: 69
+Manufacturer: SAMSUNG ELECTRONICS CO., LTD.
+Family: Galaxy Book4 Edge
+ProductName: Galaxy Book4 Edge
+ProductSku: GALAXY A5A5-PALC
+EnclosureKind: a
+BaseboardManufacturer: SAMSUNG ELECTRONICS CO., LTD.
+BaseboardProduct: NP944XMA-MC1US
+Hardware IDs
+------------
+{143e8080-c98c-51a1-8e33-a01b346c067c}   <- Manufacturer + Family + ProductName + ProductSku + BiosVendor + BiosVersion + BiosMajorRelease + BiosMinorRelease
+{e32d1103-600b-5630-9faf-5d5adac58f4f}   <- Manufacturer + Family + ProductName + BiosVendor + BiosVersion + BiosMajorRelease + BiosMinorRelease
+{b32b82ee-79c0-5bf0-8081-e964846b90ba}   <- Manufacturer + ProductName + BiosVendor + BiosVersion + BiosMajorRelease + BiosMinorRelease
+{991bf0a2-7727-5a6f-aeb5-8a43df7fb9a0}   <- Manufacturer + Family + ProductName + ProductSku + BaseboardManufacturer + BaseboardProduct
+{4f64955d-9762-54b2-84e6-3f757444846a}   <- Manufacturer + Family + ProductName + ProductSku
+{613d0dcf-9d03-51a3-b87f-ce3fff939dd0}   <- Manufacturer + Family + ProductName
+{21f00890-b6f1-5e16-981a-72929032baeb}   <- Manufacturer + ProductSku + BaseboardManufacturer + BaseboardProduct
+{50aa0c9f-7ab8-5598-872c-ef60a0775c7a}   <- Manufacturer + ProductSku
+{83aa43c5-87f7-54af-81a8-b6a8fcfeec2d}   <- Manufacturer + ProductName + BaseboardManufacturer + BaseboardProduct
+{0339244b-ab5d-5c54-a901-344543f4e40c}   <- Manufacturer + ProductName
+{83aa43c5-87f7-54af-81a8-b6a8fcfeec2d}   <- Manufacturer + Family + BaseboardManufacturer + BaseboardProduct
+{0339244b-ab5d-5c54-a901-344543f4e40c}   <- Manufacturer + Family
+{b5ba5e91-fdc7-52c1-85b5-9a0da49c298f}   <- Manufacturer + EnclosureKind
+{40993c14-f4ec-545a-b370-4d85227ecf92}   <- Manufacturer + BaseboardManufacturer + BaseboardProduct
+{ca0158e4-038b-5a84-8037-1b3cbf948d8a}   <- Manufacturer
