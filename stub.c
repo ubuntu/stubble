@@ -14,7 +14,7 @@
 #include "util.h"
 #include "version.h"
 
-DECLARE_SBAT(SBAT_STUB_SECTION_TEXT);
+DECLARE_SBAT_PADDED(SBAT_STUB_SECTION_TEXT);
 
 static bool parse_string(char16_t *p, const char16_t *opt) {
         const size_t opt_len = strlen16(opt);
@@ -31,6 +31,7 @@ static void parse_cmdline(char16_t *p) {
         while (*p != '\0') {
                 if (parse_string(p, L"debug")) {
                         log_isdebug = true;
+                        log_set_max_level(LOG_DEBUG);
                 } else if (strncmp16(p, L"stubble.dtb_override=",
                                         strlen16(L"stubble.dtb_override=")) == 0) {
                         p += strlen16(L"stubble.dtb_override=");
@@ -144,8 +145,8 @@ static EFI_STATUS find_sections(
         assert(sections);
 
         const PeSectionHeader *section_table;
-        size_t n_section_table;
-        err = pe_section_table_from_base(loaded_image->ImageBase, &section_table, &n_section_table);
+        size_t n_section_table, size_in_memory;
+        err = pe_section_table_from_base(loaded_image->ImageBase, loaded_image->ImageSize, &section_table, &n_section_table, &size_in_memory);
         if (err != EFI_SUCCESS)
                 return log_error_status(err, "Unable to locate PE section table: %m");
 
@@ -155,6 +156,7 @@ static EFI_STATUS find_sections(
                     n_section_table,
                     unified_sections,
                     /* validate_base= */ PTR_TO_SIZE(loaded_image->ImageBase),
+                    size_in_memory,
                     sections);
 
         if (!PE_SECTION_VECTOR_IS_SET(sections + UNIFIED_SECTION_LINUX))
@@ -224,7 +226,7 @@ static EFI_STATUS run(EFI_HANDLE image) {
 
         /* Pick up the arguments passed to us, and return the rest
          * as potential command line to use. */
-        (void) process_arguments(image, loaded_image, &cmdline);
+        process_arguments(image, loaded_image, &cmdline);
 
         /* Parse stubble specific bits in the input command line,
          * always do this before deciding to use internal command line. */
@@ -260,4 +262,5 @@ static EFI_STATUS run(EFI_HANDLE image) {
         return err;
 }
 
+// NOLINTNEXTLINE(misc-use-internal-linkage)
 DEFINE_EFI_MAIN_FUNCTION(run, "stubble", /* wait_for_debugger= */ false);
