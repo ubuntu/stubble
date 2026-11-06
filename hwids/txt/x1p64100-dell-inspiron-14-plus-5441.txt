@@ -1,0 +1,20 @@
+TYPE    INPUT     CHID
+   0 MFPS--BvRr-- 43b00bf1-051a-55cf-8aa6-4e0d424e1a52
+   1 MFP---BvRr-- 38c0b930-f178-5f14-9a14-00d3e13e431b
+   2 M-P---BvRr-- 8f809737-324b-5bb4-9d24-cc32eef86849
+   3 MFPSmp------ 9cf40b57-a3da-5f9c-8811-efe1b5d32e93
+   4 MFPS-------- 2d64da22-4984-5a97-8d25-f27e4794e196
+   5 MFP--------- 90eab468-ac3a-5857-bac2-606a088a539b
+   6 M--Smp------ 5e6923e9-1305-5d37-b507-953cf63f106c
+   7 M--S-------- 8dd6ba4a-10ab-594e-95c5-aa78f81c0621
+   8 M-P-mp------ 3ab0bff8-9444-58e8-9130-eb9469bb0078
+   9 M-P--------- 924908db-a80b-5fff-8917-7e9b79e933eb
+  10 MF--mp------ 7f89e5f5-d13c-5489-a568-af56ff6fdbed
+  11 MF---------- 717bca8b-c237-5776-9736-3922a63c6938
+  13 M---mp------ 60620447-0951-5151-8768-e9bca54efaff
+  14 M----------- 85d38fda-fc0e-5c6f-808f-076984ae7978
+
+LEGEND: M → manufacturer (Dell Inc.) ┄ F → family (Inspiron) ┄ P → product-name (Inspiron 14 5441)
+        S → product-sku (0C84) ┄ m → baseboard-manufacturer (Dell Inc.)
+        p → baseboard-product (09RV45) ┄ B → bios-vendor (Dell Inc.) ┄ v → bios-version (2.16.0)
+        R → bios-major (02) ┄ r → bios-minor (10) ┄ e → enclosure-type (n/a) ┄ E → edid-panel (n/a)
