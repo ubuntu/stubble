@@ -1,0 +1,136 @@
+#!/bin/sh
+# Copyright (c) Qualcomm Technologies, Inc. and/or its subsidiaries.
+# SPDX-License-Identifier: BSD-3-Clause
+#
+# Windows on ARM systems such as Snapdragon laptops ship with an UEFI firmware
+# with an insufficient ACPI implementation for Linux and no device tree. Wrap
+# the kernel image just installed in /boot: add a stubble based DTB loader,
+# device trees of these machines, and boot firmware signatures (CHID).
+#
+# depends: stubble (for the finddtbs.py script, the stubblify command, the
+# stubble.efi stub, and the machine id database)
+
+# This hook will wrap an image that was just installed to /boot with a DTB
+# loader in front.
+#
+# While stubblify is called, it's not producing a full UKI as it's called
+# with an empty --os-release, which suppresses the .osrel section, and no
+# --initrd or --cmdline. The result stays an ordinary kernel image, so e.g.
+# GRUB keeps generating a normal menu entry for it, with a host-generated
+# initrd and an editable command line.
+#
+# Secure Boot signing of the resulting image is out of scope of this hook; on
+# systems enforcing Secure Boot, the wrapped image has to be signed separately.
+#
+# Missing dependencies or no matching device tree are not fatal and leave the
+# kernel image untouched, but a failure of stubblify itself is reported.
+
+set -e
+
+# Installation prefix of stubble; adjusted by "make install-kernel-hooks"
+PREFIX=/usr
+
+# /etc/kernel/postinst.d/ hooks are called with these args:
+#     KERNEL-VERSION [KERNEL-IMAGE]
+KERNEL_VERSION="${1:?}"
+KERNEL_IMAGE="${2:-/boot/vmlinuz-$KERNEL_VERSION}"
+
+PROG="${0##*/}"
+
+fatal_w() {
+    echo "$PROG: warning: $*. Not embedding device trees." >&2
+    exit 0
+}
+
+if ! [ -f "$KERNEL_IMAGE" ]; then
+    fatal_w "$KERNEL_IMAGE does not exist"
+fi
+
+STUBBLIFY="$PREFIX/bin/stubblify"
+if [ ! -x "$STUBBLIFY" ]; then
+    fatal_w "$STUBBLIFY not found; install stubble"
+fi
+
+STUB="$PREFIX/lib/stubble/stubble.efi"
+if [ ! -f "$STUB" ]; then
+    fatal_w "$STUB not found; install stubble"
+fi
+
+# Wrapping an already wrapped image would nest a second stub, and a real UKI
+# (.osrel) is not ours to post-process. This hook rewrites the file in place,
+# so the check also keeps it idempotent.
+if "$STUBBLIFY" inspect "$KERNEL_IMAGE" 2>/dev/null | grep -Eq '^\.(hwids|osrel):'; then
+    fatal_w "Wrapper already present on $KERNEL_IMAGE"
+fi
+
+HWIDS="$PREFIX/share/stubble/hwids"
+if [ ! -d "$HWIDS" ]; then
+    fatal_w "$HWIDS not found; install stubble"
+fi
+
+MACHDB="$PREFIX/share/stubble/machdb.txt"
+if [ ! -f "$MACHDB" ]; then
+    fatal_w "$MACHDB not found; install stubble"
+fi
+
+FINDDTBS="$PREFIX/libexec/stubble/finddtbs.py"
+if [ ! -x "$FINDDTBS" ]; then
+    fatal_w "$FINDDTBS not found; install stubble"
+fi
+
+# Same device tree locations as systemd's 90-loaderentry.install; these are
+# shipped by kernel packages, hence not relative to stubble's PREFIX
+DTB_DIR=
+for dir in \
+    "/usr/lib/firmware/$KERNEL_VERSION/device-tree" \
+    "/usr/lib/linux-image-$KERNEL_VERSION" \
+    "/usr/lib/modules/$KERNEL_VERSION/dtb"
+do
+    if [ -d "$dir" ]; then
+        DTB_DIR="$dir"
+        break
+    fi
+done
+if [ -z "$DTB_DIR" ]; then
+    fatal_w "No device tree directory found for $KERNEL_VERSION"
+fi
+
+if ! DTBS=$("$FINDDTBS" "$DTB_DIR" "$HWIDS" "$MACHDB"); then
+    fatal_w "$FINDDTBS failed"
+fi
+
+# Split on newlines only, so that paths with spaces survive.
+set --
+IFS='
+'
+for dtb in $DTBS; do
+    set -- "$@" --devicetree-auto="$dtb"
+done
+unset IFS
+
+# finddtbs might return no device tree when this kernel carries no device
+# tree for any machine in the databases.
+if [ $# -eq 0 ]; then
+    fatal_w "No device tree in $DTB_DIR matches $HWIDS or $MACHDB"
+fi
+
+echo "$PROG: embedding $# device trees from $DTB_DIR into $KERNEL_IMAGE"
+
+# Build beside the target and rename, so a failure or a crash leaves the
+# bootable image that is already in place untouched.
+KERNEL_TMP="$KERNEL_IMAGE.stubble.tmp"
+trap 'rm -f "$KERNEL_TMP"' EXIT HUP INT TERM
+
+"$STUBBLIFY" build \
+    --stub="$STUB" \
+    --linux="$KERNEL_IMAGE" \
+    --uname="$KERNEL_VERSION" \
+    --os-release= \
+    --hwids="$HWIDS" \
+    --machdb="$MACHDB" \
+    "$@" \
+    --output="$KERNEL_TMP"
+
+chmod --reference="$KERNEL_IMAGE" "$KERNEL_TMP"
+chown --reference="$KERNEL_IMAGE" "$KERNEL_TMP" || :
+mv "$KERNEL_TMP" "$KERNEL_IMAGE"

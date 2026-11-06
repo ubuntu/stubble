@@ -1,0 +1,160 @@
+#!/bin/sh
+# Copyright (c) Qualcomm Technologies, Inc. and/or its subsidiaries.
+# SPDX-License-Identifier: BSD-3-Clause
+#
+# Windows on ARM systems such as Snapdragon laptops ship with an UEFI firmware
+# with an insufficient ACPI implementation for Linux and no device tree. Wrap
+# the EFI kernel image installed in the ESP: add a stubble based DTB loader,
+# device trees of these machines, and boot firmware signatures (CHID).
+#
+# depends: stubble (for the finddtbs.py script, the stubblify command, the
+# stubble.efi stub, and the machine id database)
+
+# This hook will wrap kernel images installed in the ESP with stubble,
+# embedding the device trees from this kernel for the machines in the hardware
+# ID and machine databases, plus the databases themselves.
+#
+# While stubblify is called, it's not producing a full UKI as it's called
+# with an empty --os-release, which suppresses the .osrel section, and no
+# --initrd or --cmdline. kernel-install identifies a UKI by .osrel, so the
+# result is handled as an ordinary kernel image and keeps a normal Type #1
+# boot loader entry, a host-generated initrd and an editable command line.
+#
+# Secure Boot signing of the resulting image is out of scope of this hook; on
+# systems enforcing Secure Boot, the wrapped image has to be signed separately.
+#
+# Missing dependencies or no matching device tree are not fatal and leave the
+# kernel image untouched, but a failure of stubblify itself is reported.
+
+set -e
+
+# Installation prefix of stubble; adjusted by "make install-kernel-hooks"
+PREFIX=/usr
+
+# kernel-install calls with these args:
+#     add KERNEL-VERSION $BOOT/ENTRY-TOKEN/KERNEL-VERSION/ KERNEL-IMAGE \
+#         [INITRD-FILE ...]
+COMMAND="${1:?}"
+KERNEL_VERSION="${2:?}"
+ENTRY_DIR_ABS="${3:?}"
+KERNEL_IMAGE="$4"
+# $5 and later are initrds which we don't postprocess
+
+[ "$COMMAND" = "add" ] || exit 0
+
+log() {
+    if [ "${KERNEL_INSTALL_VERBOSE:-0}" -gt 0 ]; then
+        echo "$*" >&2
+    fi
+}
+
+fatal_w() {
+    log "Warning: $*. Not embedding device trees."
+    exit 0
+}
+
+# With layout=auto or no layout set, recent kernel-install will set the layout
+# to bls when installing kernels that use UAPI.1 Boot Loader Specification[2]
+# Type #1 layout which is the only case where the post-processing done here is
+# useful.
+if [ "$KERNEL_INSTALL_LAYOUT" != "bls" ]; then
+    fatal_w "KERNEL_INSTALL_LAYOUT=${KERNEL_INSTALL_LAYOUT} (!= bls)"
+fi
+
+# A real UKI is not ours to post-process.
+if [ "$KERNEL_INSTALL_IMAGE_TYPE" = "uki" ]; then
+    fatal_w "KERNEL_INSTALL_IMAGE_TYPE=uki"
+fi
+
+# 90-loaderentry.install has already copied the kernel to ENTRY_DIR_ABS and
+# pointed the entry at it; replace it in place with the wrapped image.
+KERNEL_DEST="$ENTRY_DIR_ABS/linux"
+[ -n "$KERNEL_IMAGE" ] || KERNEL_IMAGE="$KERNEL_DEST"
+
+STUBBLIFY="$PREFIX/bin/stubblify"
+if [ ! -x "$STUBBLIFY" ]; then
+    fatal_w "$STUBBLIFY not found; install stubble"
+fi
+
+STUB="$PREFIX/lib/stubble/stubble.efi"
+if [ ! -f "$STUB" ]; then
+    fatal_w "$STUB not found; install stubble"
+fi
+
+HWIDS="$PREFIX/share/stubble/hwids"
+if [ ! -d "$HWIDS" ]; then
+    fatal_w "$HWIDS not found; install stubble"
+fi
+
+MACHDB="$PREFIX/share/stubble/machdb.txt"
+if [ ! -f "$MACHDB" ]; then
+    fatal_w "$MACHDB not found; install stubble"
+fi
+
+FINDDTBS="$PREFIX/libexec/stubble/finddtbs.py"
+if [ ! -x "$FINDDTBS" ]; then
+    fatal_w "$FINDDTBS not found; install stubble"
+fi
+
+# Wrapping an already wrapped image would nest a second stub, and a real UKI
+# (.osrel) is not ours to post-process.
+if "$STUBBLIFY" inspect "$KERNEL_IMAGE" 2>/dev/null | grep -Eq '^\.(hwids|osrel):'; then
+    fatal_w "Wrapper already present on $KERNEL_IMAGE"
+fi
+
+# Same device tree locations as systemd's 90-loaderentry.install; these are
+# shipped by kernel packages, hence not relative to stubble's PREFIX
+DTB_DIR=
+for dir in \
+    "/usr/lib/firmware/$KERNEL_VERSION/device-tree" \
+    "/usr/lib/linux-image-$KERNEL_VERSION" \
+    "/usr/lib/modules/$KERNEL_VERSION/dtb"
+do
+    if [ -d "$dir" ]; then
+        DTB_DIR="$dir"
+        break
+    fi
+done
+if [ -z "$DTB_DIR" ]; then
+    fatal_w "No device tree directory found for $KERNEL_VERSION"
+fi
+
+if ! DTBS=$("$FINDDTBS" "$DTB_DIR" "$HWIDS" "$MACHDB"); then
+    fatal_w "$FINDDTBS failed"
+fi
+
+# Split on newlines only, so that paths with spaces survive.
+set --
+IFS='
+'
+for dtb in $DTBS; do
+    set -- "$@" --devicetree-auto="$dtb"
+done
+unset IFS
+
+# finddtbs might return no device tree when this kernel carries no device
+# tree for any machine in the databases.
+if [ $# -eq 0 ]; then
+    fatal_w "No device tree in $DTB_DIR matches $HWIDS or $MACHDB"
+fi
+
+log "Embedding $# device trees from $DTB_DIR into $KERNEL_DEST"
+
+# Build beside the target and rename, so a failure leaves the image that is
+# already in place untouched.
+KERNEL_TMP="$KERNEL_DEST.stubble.tmp"
+trap 'rm -f "$KERNEL_TMP"' EXIT HUP INT TERM
+
+"$STUBBLIFY" build \
+    --stub="$STUB" \
+    --linux="$KERNEL_IMAGE" \
+    --uname="$KERNEL_VERSION" \
+    --os-release= \
+    --hwids="$HWIDS" \
+    --machdb="$MACHDB" \
+    "$@" \
+    --output="$KERNEL_TMP"
+
+chmod --reference="$KERNEL_IMAGE" "$KERNEL_TMP"
+chown --reference="$KERNEL_IMAGE" "$KERNEL_TMP" || :
+mv "$KERNEL_TMP" "$KERNEL_DEST"
