@@ -31,3 +31,37 @@ Hardware IDs
 {b5ba5e91-fdc7-52c1-85b5-9a0da49c298f}   <- Manufacturer + EnclosureKind
 {40993c14-f4ec-545a-b370-4d85227ecf92}   <- Manufacturer + BaseboardManufacturer + BaseboardProduct
 {ca0158e4-038b-5a84-8037-1b3cbf948d8a}   <- Manufacturer
+
+Computer Information
+--------------------
+BiosVendor: SAMSUNG ELECTRONICS CO., LTD.
+BiosVersion: P00AKY.053.250618.WY.1649
+BiosMajorRelease: 5
+BiosMinorRelease: 27
+BiosReleaseDate: 6/18/2025
+FirmwareMajorRelease: 01
+FirmwareMinorRelease: 64
+Manufacturer: SAMSUNG ELECTRONICS CO., LTD.
+Family: Galaxy Book4 Edge
+ProductName: Galaxy Book4 Edge
+ProductSku: GALAXY A5A5-PAKY
+EnclosureKind: a
+BaseboardManufacturer: SAMSUNG ELECTRONICS CO., LTD.
+BaseboardProduct: NP940XMA-KB1IT
+Hardware IDs
+------------
+{3b47e649-a944-5eff-9a5c-4a52d7e70a16}   <- Manufacturer + Family + ProductName + ProductSku + BiosVendor + BiosVersion + BiosMajorRelease + BiosMinorRelease
+{9356d852-1f3b-5d27-a150-b5c638226fdb}   <- Manufacturer + Family + ProductName + BiosVendor + BiosVersion + BiosMajorRelease + BiosMinorRelease
+{69e813d9-594e-5f7d-944e-b55a97b28c92}   <- Manufacturer + ProductName + BiosVendor + BiosVersion + BiosMajorRelease + BiosMinorRelease
+{8fc369d5-d5a6-54b7-84a2-2c26ca106430}   <- Manufacturer + Family + ProductName + ProductSku + BaseboardManufacturer + BaseboardProduct
+{f70b1321-116e-5bc4-ae09-601d75d1f201}   <- Manufacturer + Family + ProductName + ProductSku
+{613d0dcf-9d03-51a3-b87f-ce3fff939dd0}   <- Manufacturer + Family + ProductName
+{0569ad99-d9c0-586c-bd74-3871407fe316}   <- Manufacturer + ProductSku + BaseboardManufacturer + BaseboardProduct
+{98a0b667-b7e2-5722-92c8-e2591410508f}   <- Manufacturer + ProductSku
+{8f53b329-2c93-50a5-9fef-2602b9f58565}   <- Manufacturer + ProductName + BaseboardManufacturer + BaseboardProduct
+{0339244b-ab5d-5c54-a901-344543f4e40c}   <- Manufacturer + ProductName
+{8f53b329-2c93-50a5-9fef-2602b9f58565}   <- Manufacturer + Family + BaseboardManufacturer + BaseboardProduct
+{0339244b-ab5d-5c54-a901-344543f4e40c}   <- Manufacturer + Family
+{b5ba5e91-fdc7-52c1-85b5-9a0da49c298f}   <- Manufacturer + EnclosureKind
+{590b564b-e6dc-581d-b929-dd64382529fd}   <- Manufacturer + BaseboardManufacturer + BaseboardProduct
+{ca0158e4-038b-5a84-8037-1b3cbf948d8a}   <- Manufacturer
