@@ -1,0 +1,20 @@
+{
+    "type": "devicetree",
+    "name": "Microsoft Corporation Surface",
+    "compatible": "microsoft,surface-laptop-8-13p8",
+    "hwids": [
+        "4901c694-a6a3-500b-b0dc-5043ec44876e",
+        "e092d86b-69ed-5aae-b6f2-f17882d3ceae",
+        "e077d750-74cb-5328-bf32-5ac3ce4080b7",
+        "d25b93b8-d887-5811-854a-cebf7b9b0dfe",
+        "23850e4e-0468-5259-8dad-6fa1516d866d",
+        "211039a0-cca2-5f53-b147-390eb5468695",
+        "19b35597-e9ef-56cc-afea-77dcd8c05868",
+        "56fefb43-695b-5ac8-9299-8f087307dec7",
+        "f51f4dd0-cf8f-541e-bc8e-2206cea3c785",
+        "65bceb13-eedb-57e8-b9c2-413a628311dc",
+        "9c813de1-ae12-5113-a297-cbac042b46bf",
+        "628c5a08-bb59-507e-b389-769b86f0f45c",
+        "49f37653-7767-52c2-a54c-c618d8ec2f81"
+    ]
+}

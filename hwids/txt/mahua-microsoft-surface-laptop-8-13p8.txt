@@ -1,0 +1,37 @@
+Computer Information
+--------------------
+BiosVendor: Microsoft Corporation
+BiosVersion: 8.5140.155
+BiosMajorRelease: 255
+BiosMinorRelease: 255
+FirmwareMajorRelease: ff
+FirmwareMinorRelease: ff
+Manufacturer: Microsoft Corporation
+Family: Surface
+ProductName: Surface Laptop for Business 13.8in 8th Ed Snapdragon
+ProductSku: Surface_Laptop_for_Business_13_8in_8th_Ed_Snapdragon_2036
+EnclosureKind: 9
+BaseboardManufacturer: Microsoft Corporation
+BaseboardProduct: Surface Laptop for Business 13.8in 8th Ed Snapdragon
+Hardware IDs
+------------
+{4901c694-a6a3-500b-b0dc-5043ec44876e}   <- Manufacturer + Family + ProductName + ProductSku + BiosVendor + BiosVersion + BiosMajorRelease + BiosMinorRelease
+{e092d86b-69ed-5aae-b6f2-f17882d3ceae}   <- Manufacturer + Family + ProductName + BiosVendor + BiosVersion + BiosMajorRelease + BiosMinorRelease
+{e077d750-74cb-5328-bf32-5ac3ce4080b7}   <- Manufacturer + ProductName + BiosVendor + BiosVersion + BiosMajorRelease + BiosMinorRelease
+{d25b93b8-d887-5811-854a-cebf7b9b0dfe}   <- Manufacturer + Family + ProductName + ProductSku + BaseboardManufacturer + BaseboardProduct
+{23850e4e-0468-5259-8dad-6fa1516d866d}   <- Manufacturer + Family + ProductName + ProductSku
+{211039a0-cca2-5f53-b147-390eb5468695}   <- Manufacturer + Family + ProductName
+{19b35597-e9ef-56cc-afea-77dcd8c05868}   <- Manufacturer + ProductSku + BaseboardManufacturer + BaseboardProduct
+{56fefb43-695b-5ac8-9299-8f087307dec7}   <- Manufacturer + ProductSku
+{f51f4dd0-cf8f-541e-bc8e-2206cea3c785}   <- Manufacturer + ProductName + BaseboardManufacturer + BaseboardProduct
+{65bceb13-eedb-57e8-b9c2-413a628311dc}   <- Manufacturer + ProductName
+{9c813de1-ae12-5113-a297-cbac042b46bf}   <- Manufacturer + Family + BaseboardManufacturer + BaseboardProduct
+{ca2e5189-1d32-509f-88a0-d4ebcc721899}   <- Manufacturer + Family
+{aca387a9-183e-5da9-8f9d-f460c3f50f54}   <- Manufacturer + EnclosureKind
+{48ae73e9-c28e-500c-bcdf-1f8a6d0bd440}   <- Manufacturer + BaseboardManufacturer + BaseboardProduct
+{cc0aea32-ad2c-5013-8bed-cede6be8c9f4}   <- Manufacturer
+Extra Hardware IDs
+------------------
+{628c5a08-bb59-507e-b389-769b86f0f45c}   <- Manufacturer + Family + ProductName + ProductSku + BiosVendor
+{49f37653-7767-52c2-a54c-c618d8ec2f81}   <- Manufacturer + Family + ProductName + BiosVendor
+{9914cecc-aab7-570e-8fce-e86009ea6bbb}   <- Manufacturer + BiosVendor
