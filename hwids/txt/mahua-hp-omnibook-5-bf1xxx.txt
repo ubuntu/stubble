@@ -1,0 +1,10 @@
+TYPE    INPUT     CHID
+   8 M-P-mp------ 4ddf1f98-9166-536f-853d-452ee94ac07a
+   9 M-P--------- aa26cf43-45d4-5a10-901b-0358db424bf1
+  13 M---mp------ 04615eb0-be2e-5e21-b6f5-7732101ac5e2
+  14 M----------- 93f84748-c854-5d6b-b78a-13c2361e0758
+
+LEGEND: M → manufacturer (HP) ┄ F → family (n/a) ┄ P → product-name (HP OmniBook 5 Laptop 16-bf1xxx)
+        S → product-sku (n/a) ┄ m → baseboard-manufacturer (HP)
+        p → baseboard-product (8F47) ┄ B → bios-vendor (n/a) ┄ v → bios-version (n/a)
+        R → bios-major (n/a) ┄ r → bios-minor (n/a) ┄ e → enclosure-type (n/a) ┄ E → edid-panel (n/a)
