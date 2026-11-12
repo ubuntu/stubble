@@ -1,0 +1,36 @@
+TYPE    INPUT     CHID
+   3 MFPSmp------ f533568b-add3-5960-b221-887bb4e5ffae
+   4 MFPS-------- 98ccce30-e020-5108-bb0c-851f2baaefd1
+   5 MFP--------- 16908eb8-2d8a-5dde-a6a6-8d22238b078a
+   6 M--Smp------ b891dc10-a6cb-5235-8bbf-3f8276e6fc93
+   7 M--S-------- 2f8385a0-6150-5f0c-9f7a-b069d1d0c8ac
+   8 M-P-mp------ 9f15eae2-29db-5d55-9627-840fe41e3ec0
+   9 M-P--------- 860c9fd7-bb87-59da-b2d8-a38c5dec1188
+  10 MF--mp------ 33f1c4d6-5df6-5d6c-9f15-421865586185
+  11 MF---------- b95e57c6-0395-526b-a79e-003c982210c5
+  13 M---mp------ f96424b4-fb7e-5822-95c8-8ffe76c2e740
+  14 M----------- 93f84748-c854-5d6b-b78a-13c2361e0758
+
+LEGEND: M → manufacturer (HP) ┄ F → family (103C_5335KV HP OmniBook 5) ┄ P → product-name (HP OmniBook 5 Laptop 14-he0xxx)
+        S → product-sku (BB6F0UA#ABA) ┄ m → baseboard-manufacturer (HP)
+        p → baseboard-product (8E33) ┄ B → bios-vendor (n/a) ┄ v → bios-version (n/a)
+        R → bios-major (n/a) ┄ r → bios-minor (n/a) ┄ e → enclosure-type (n/a) ┄ E → edid-panel (n/a)
+
+TYPE    INPUT     CHID
+   3 MFPSmp------ 79df1012-65e8-593b-a1b6-44777f160826
+   4 MFPS-------- 9c41ad0a-60e5-5c8e-85a8-05067c7e7309
+   5 MFP--------- 50d8eb7d-547d-550d-9def-eac5e34784e2
+   6 M--Smp------ a5908151-ea70-5d42-93f3-666d3981afdc
+   7 M--S-------- c40e0946-bbf3-5248-ad3e-34c91d878c0c
+   8 M-P-mp------ 33bf3df7-0d54-59cf-868a-99144c742bc7
+   9 M-P--------- cd0a503a-7013-55f4-9671-bd3a69f192d5
+  10 MF--mp------ 33f1c4d6-5df6-5d6c-9f15-421865586185
+  11 MF---------- b95e57c6-0395-526b-a79e-003c982210c5
+  12 M---------e- f999e8e2-2bed-5ee7-85be-a69096b9544d
+  13 M---mp------ f96424b4-fb7e-5822-95c8-8ffe76c2e740
+  14 M----------- 93f84748-c854-5d6b-b78a-13c2361e0758
+
+LEGEND: M → manufacturer (HP) ┄ F → family (103C_5335KV HP OmniBook 5) ┄ P → product-name (HP OmniBook 5 Laptop 16-bf0xxx)
+        S → product-sku (C40F2PA#ACJ) ┄ m → baseboard-manufacturer (HP)
+        p → baseboard-product (8E33) ┄ B → bios-vendor (n/a) ┄ v → bios-version (n/a)
+        R → bios-major (n/a) ┄ r → bios-minor (n/a) ┄ e → enclosure-type (a) ┄ E → edid-panel (n/a)
