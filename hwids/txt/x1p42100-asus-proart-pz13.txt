@@ -1,0 +1,13 @@
+TYPE    INPUT     CHID
+   1 MFP---BvRr-- 4f1d8eae-5b57-5097-b8b0-1f97e709ec3b
+   2 M-P---BvRr-- 0bd45ebf-f168-5da9-86b6-c6ada77fdc3e
+   5 MFP--------- 05878334-8124-5858-adf3-c1f3d680c1ac
+   9 M-P--------- d128a171-37b5-50ff-b682-b28ad90082c7
+  11 MF---------- a052d4ce-207a-5de1-a469-64b1fb8cc604
+  12 M---------e- 3b3ea477-5679-5aa1-b22f-3889f29d0434
+  14 M----------- 65605ed1-09e2-57aa-bd0f-a26c1d35433f
+
+LEGEND: M → manufacturer (ASUSTeK COMPUTER INC.) ┄ F → family (ProArt PZ13) ┄ P → product-name (ProArt PZ13 HT5306QA_HT5306QA)
+        S → product-sku (n/a) ┄ m → baseboard-manufacturer (n/a)
+        p → baseboard-product (n/a) ┄ B → bios-vendor (Insyde) ┄ v → bios-version (HT5306QA.311)
+        R → bios-major (03) ┄ r → bios-minor (0b) ┄ e → enclosure-type (14) ┄ E → edid-panel (n/a)
