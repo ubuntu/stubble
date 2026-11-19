@@ -1,0 +1,33 @@
+Computer Information
+--------------------
+BiosVendor: Insyde
+BiosVersion: F.06
+BiosMajorRelease: 15
+BiosMinorRelease: 6
+BiosReleaseDate: 7/14/2026
+FirmwareMajorRelease: 18
+FirmwareMinorRelease: 1c
+Manufacturer: HP
+Family: 103C_5335KV HP OmniBook 5
+ProductName: HP OmniBook 5 Laptop 16-bf1xxx
+ProductSku: D3ZN3UA#ABA
+EnclosureKind: a
+BaseboardManufacturer: HP
+BaseboardProduct: 8F47
+Hardware IDs
+------------
+{8292003e-8879-55df-92d7-a5e5cfac5bef}   <- Manufacturer + Family + ProductName + ProductSku + BiosVendor + BiosVersion + BiosMajorRelease + BiosMinorRelease
+{7e342790-6740-5e94-a170-29c1e5d9e1b3}   <- Manufacturer + Family + ProductName + BiosVendor + BiosVersion + BiosMajorRelease + BiosMinorRelease
+{b011dd23-7091-5ce6-b6c2-6576a2603ad4}   <- Manufacturer + ProductName + BiosVendor + BiosVersion + BiosMajorRelease + BiosMinorRelease
+{3edd06a3-b301-5468-9216-2884a31ceab4}   <- Manufacturer + Family + ProductName + ProductSku + BaseboardManufacturer + BaseboardProduct
+{103ed2a3-9e48-57fd-b7b4-1c5d20ee06c3}   <- Manufacturer + Family + ProductName + ProductSku
+{2ca25d79-a03b-5c14-8cd2-22376e452eb2}   <- Manufacturer + Family + ProductName
+{c8c76b28-fbcb-5fe0-abcd-40ab7ef7bcd6}   <- Manufacturer + ProductSku + BaseboardManufacturer + BaseboardProduct
+{1807ef5a-8baf-50ca-b998-c3d7457b83db}   <- Manufacturer + ProductSku
+{4ddf1f98-9166-536f-853d-452ee94ac07a}   <- Manufacturer + ProductName + BaseboardManufacturer + BaseboardProduct
+{aa26cf43-45d4-5a10-901b-0358db424bf1}   <- Manufacturer + ProductName
+{54c8efcb-a28f-560d-8ea2-dd03771ade08}   <- Manufacturer + Family + BaseboardManufacturer + BaseboardProduct
+{b95e57c6-0395-526b-a79e-003c982210c5}   <- Manufacturer + Family
+{f999e8e2-2bed-5ee7-85be-a69096b9544d}   <- Manufacturer + EnclosureKind
+{04615eb0-be2e-5e21-b6f5-7732101ac5e2}   <- Manufacturer + BaseboardManufacturer + BaseboardProduct
+{93f84748-c854-5d6b-b78a-13c2361e0758}   <- Manufacturer
