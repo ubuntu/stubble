@@ -1,0 +1,32 @@
+Computer Information
+--------------------
+BiosVendor: Insyde
+BiosVersion: UX3480QA.303
+BiosMajorRelease: 1
+BiosMinorRelease: 27
+FirmwareMajorRelease: 03
+FirmwareMinorRelease: 04
+Manufacturer: ASUS
+Family: Zenbook 14
+ProductName: Zenbook 14 UX3480QA
+ProductSku: null
+EnclosureKind: a
+BaseboardManufacturer: ASUSTeK COMPUTER INC.
+BaseboardProduct: UX3480QA
+Hardware IDs
+------------
+{3398b61f-aad3-5484-aef0-d65d8bbecb68}   <- Manufacturer + Family + ProductName + ProductSku + BiosVendor + BiosVersion + BiosMajorRelease + BiosMinorRelease
+{863f3e16-a6b7-530d-98ba-387f1508157f}   <- Manufacturer + Family + ProductName + BiosVendor + BiosVersion + BiosMajorRelease + BiosMinorRelease
+{3157e6ad-2506-5ed8-8e2b-0d8352664e2f}   <- Manufacturer + ProductName + BiosVendor + BiosVersion + BiosMajorRelease + BiosMinorRelease
+{c8350d1e-4a23-54bd-b773-8e7333a30305}   <- Manufacturer + Family + ProductName + ProductSku + BaseboardManufacturer + BaseboardProduct
+{59b7e39f-cce2-5736-95db-e3becc8e1cd8}   <- Manufacturer + Family + ProductName + ProductSku
+{40fdb1be-2687-520f-9056-bf19282c4277}   <- Manufacturer + Family + ProductName
+{41a0c293-6602-50ec-881d-ad12ff1db8f8}   <- Manufacturer + ProductSku + BaseboardManufacturer + BaseboardProduct
+{37448257-aa06-5bda-b6b5-c82f78b98136}   <- Manufacturer + ProductSku
+{2eed3ed5-f1a6-5f09-a129-5f569481f81e}   <- Manufacturer + ProductName + BaseboardManufacturer + BaseboardProduct
+{cc7b1cce-6b99-5385-b37b-646c0a08c509}   <- Manufacturer + ProductName
+{1df04289-d893-5db6-a2f7-706662991cae}   <- Manufacturer + Family + BaseboardManufacturer + BaseboardProduct
+{91313237-0a6f-5b16-b0f1-ba54260a4997}   <- Manufacturer + Family
+{a29d04c1-686b-5861-9ff7-cadf33cbcb97}   <- Manufacturer + EnclosureKind
+{33940a5d-20a6-56d9-b492-31baffb6c6f5}   <- Manufacturer + BaseboardManufacturer + BaseboardProduct
+{c4e7b7b9-2520-5397-8040-8ac279f540d8}   <- Manufacturer
