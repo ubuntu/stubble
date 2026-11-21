@@ -1,5 +1,6 @@
 /* SPDX-License-Identifier: LGPL-2.1-or-later */
 
+#include "proto/simple-text-io.h"
 #include "util.h"
 #include "version.h"
 
@@ -60,6 +61,8 @@ __attribute__((noinline)) void notify_debugger(const char *identity, volatile bo
                 asm volatile("pause");
 #  elif defined(__aarch64__)
                 asm volatile("wfi");
+#  elif defined(__riscv)
+                asm volatile(".insn i 0x0F, 0, x0, x0, 0x010");
 #  else
                 BS->Stall(5000);
 #  endif
@@ -74,8 +77,64 @@ void *find_configuration_table(const EFI_GUID *guid) {
         return NULL;
 }
 
+void set_attribute_safe(size_t attr) {
+        /* Various UEFI implementations suppress color changes from a color to the same color. Often, we want
+         * to force out the color change though, hence change the color here once, and then back. We simply
+         * mark the color as bright for a moment, and then revert that. */
+
+        attr ^= 0x08;
+        ST->ConOut->SetAttribute(ST->ConOut, attr);
+        attr ^= 0x08;
+        ST->ConOut->SetAttribute(ST->ConOut, attr);
+}
+
 void *xmalloc(size_t size) {
         void *p = NULL;
         assert_se(BS->AllocatePool(EfiLoaderData, size, &p) == EFI_SUCCESS);
         return p;
+}
+
+Pages xmalloc_aligned_pages(
+                EFI_ALLOCATE_TYPE type,
+                EFI_MEMORY_TYPE memory_type,
+                size_t n_pages,
+                size_t alignment,
+                EFI_PHYSICAL_ADDRESS addr) {
+
+        EFI_PHYSICAL_ADDRESS aligned = addr;
+
+        /* Allow to pass block_io->Media->IoAlign to this function directly.
+         * alignment <= 1 means no alignment is required, in that case just
+         * allocate pages directly.
+         */
+        if (alignment <= 1)
+                alignment = EFI_PAGE_SIZE;
+
+        assert(ISPOWEROF2(alignment));
+
+        if (alignment <= EFI_PAGE_SIZE) {
+                assert_se(BS->AllocatePages(type, memory_type, n_pages, &aligned) == EFI_SUCCESS);
+                return (Pages) {
+                        .addr = aligned,
+                        .n_pages = n_pages,
+                };
+        }
+
+        size_t total_pages = n_pages + EFI_SIZE_TO_PAGES(alignment);
+        assert_se(BS->AllocatePages(type, memory_type, total_pages, &addr) == EFI_SUCCESS);
+
+        aligned = ALIGN_TO(addr, alignment);
+        size_t unaligned_pages = EFI_SIZE_TO_PAGES(aligned - addr);
+        if (unaligned_pages > 0)
+                assert_se(BS->FreePages(addr, unaligned_pages) == EFI_SUCCESS);
+
+        addr = aligned + n_pages * EFI_PAGE_SIZE;
+        unaligned_pages = total_pages - n_pages - unaligned_pages;
+        if (unaligned_pages > 0)
+                assert_se(BS->FreePages(addr, unaligned_pages) == EFI_SUCCESS);
+
+        return (Pages) {
+                .addr = aligned,
+                .n_pages = n_pages,
+        };
 }

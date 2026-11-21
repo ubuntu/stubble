@@ -37,3 +37,16 @@ _noreturn_ void efi_assert(const char *expr, const char *file, unsigned line, co
                 assert_se(_expr_ >= _zero);              \
                 _expr_;                                  \
         })
+
+/* Mark a pointer parameter as intentionally nullable. This is a no-op at runtime but suppresses
+ * the coccinelle check-pointer-deref warning for parameters that are safely handled before any
+ * dereference (e.g. passed to a NULL-safe helper like iovec_is_set()). */
+#define POINTER_MAY_BE_NULL(ptr) ({ (void) (ptr); })
+
+/* sizeof() does not evaluate its argument - it is a compile-time constant expression - so *ptr
+ * inside sizeof() is not a real dereference. However, coccinelle cannot distinguish this from an
+ * actual dereference, and when sizeof(*ptr) appears in a variable initializer the assert(ptr) that
+ * follows cannot come first (declarations must precede statements). Use this macro in place
+ * of sizeof() to avoid the false positive - coccinelle sees SIZEOF() as a function call (via
+ * parsing_hacks.h) and never looks inside the argument. */
+#define SIZEOF(x) sizeof(x)

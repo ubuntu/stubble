@@ -234,7 +234,7 @@ typedef struct sd_hwdb sd_hwdb;
 
 /* shared/ forward declarations */
 
-typedef int (*copy_progress_bytes_t)(uint64_t n_bytes, void *userdata);
+typedef int (*copy_progress_bytes_t)(uint64_t n_bytes, uint64_t bytes_per_second, void *userdata);
 typedef int (*copy_progress_path_t)(const char *path, const struct stat *st, void *userdata);
 
 struct local_address;
@@ -282,7 +282,6 @@ typedef struct ConfigTableItem ConfigTableItem;
 typedef struct CPUSet CPUSet;
 typedef struct FDSet FDSet;
 typedef struct Fido2HmacSalt Fido2HmacSalt;
-typedef struct FirewallContext FirewallContext;
 typedef struct GroupRecord GroupRecord;
 typedef struct Image Image;
 typedef struct ImagePolicy ImagePolicy;
@@ -305,7 +304,12 @@ typedef struct VeritySettings VeritySettings;
 /* We duplicate various commonly used constants here so we can keep most static inline functions without
  * having to include the full header that provides these constants. */
 
+/* glibc defines AT_FDCWD as -100, but musl defines it as (-100). */
+#ifdef __GLIBC__
 #define AT_FDCWD                -100
+#else
+#define AT_FDCWD                (-100)
+#endif
 #define AT_EMPTY_PATH           0x1000
 #define AT_SYMLINK_FOLLOW       0x400
 #define AT_SYMLINK_NOFOLLOW     0x100

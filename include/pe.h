@@ -5,6 +5,10 @@
 
 extern bool dtb_override;
 
+/* PE flags in the Characteristics attribute of the optional header indicating executable code */
+#define PE_CODE 0x00000020U
+#define PE_EXECUTE 0x20000000U
+
 /* This is the actual PE format of the section header */
 typedef struct PeSectionHeader {
         uint8_t  Name[8];
@@ -34,26 +38,38 @@ static inline bool PE_SECTION_VECTOR_IS_SET(const PeSectionVector *v) {
 
 EFI_STATUS pe_section_table_from_base(
                 const void *base,
+                size_t base_len,
                 const PeSectionHeader **ret_section_table,
-                size_t *ret_n_section_table);
+                size_t *ret_n_section_table,
+                size_t *ret_size_in_memory);
 
 EFI_STATUS pe_section_table_from_file(
                 EFI_FILE *handle,
                 PeSectionHeader **ret_section_table,
-                size_t *ret_n_section_table);
+                size_t *ret_n_section_table,
+                size_t *ret_size_in_memory);
 
 void pe_locate_sections(
                 const PeSectionHeader section_table[],
                 size_t n_section_table,
                 const char* const section_names[],
                 size_t validate_base,
+                size_t size_in_memory,
                 PeSectionVector sections[]);
 
 EFI_STATUS pe_memory_locate_sections(
                 const void *base,
+                size_t base_len,
                 const char *const section_names[],
                 PeSectionVector sections[]);
 
-EFI_STATUS pe_kernel_info(const void *base, uint32_t *ret_entry_point, uint64_t *ret_image_base, size_t *ret_size_in_memory);
+EFI_STATUS pe_kernel_info(
+                const void *base,
+                size_t base_len,
+                uint32_t *ret_entry_point,
+                size_t *ret_size_in_memory,
+                uint32_t *ret_section_alignment);
 
 EFI_STATUS pe_kernel_check_no_relocation(const void *base);
+
+bool pe_kernel_check_nx_compat(const void *base);

@@ -1,6 +1,7 @@
 /* SPDX-License-Identifier: LGPL-2.1-or-later */
 
 #include "efi-string.h"
+#include "string-util-fundamental.h"
 
 #include "proto/simple-text-io.h"
 #include "util.h"
@@ -340,6 +341,8 @@ static bool efi_fnmatch_prefix(const char16_t *p, const char16_t *h, const char1
 
 /* Patterns are fnmatch-compatible (with reduced feature support). */
 bool efi_fnmatch(const char16_t *pattern, const char16_t *haystack) {
+        assert(haystack);
+
         /* Patterns can be considered as simple patterns (without '*') concatenated by '*'. By doing so we
          * simply have to make sure the very first simple pattern matches the start of haystack. Then we just
          * look for the remaining simple patterns *somewhere* within the haystack (in order) as any extra
@@ -489,7 +492,7 @@ char* line_get_key_value(char *s, const char *sep, size_t *pos, char **ret_key, 
                         value++;
 
                 /* unquote */
-                if (value[0] == '"' && line[linelen - 1] == '"') {
+                if (value[0] != '\0' && strchr8(QUOTES, value[0]) && line[linelen - 1] == value[0]) {
                         value++;
                         line[linelen - 1] = '\0';
                 }
@@ -501,7 +504,7 @@ char* line_get_key_value(char *s, const char *sep, size_t *pos, char **ret_key, 
 }
 
 char16_t *hexdump(const void *data, size_t size) {
-        static const char hex[] = "0123456789abcdef";
+        const char *hex = LOWERCASE_HEXDIGITS;
         const uint8_t *d = data;
 
         assert(data || size == 0);
@@ -667,7 +670,7 @@ static bool push_str(FormatContext *ctx, SpecifierContext *sp) {
 }
 
 static bool push_num(FormatContext *ctx, SpecifierContext *sp, uint64_t u) {
-        const char *digits = sp->lowercase ? "0123456789abcdef" : "0123456789ABCDEF";
+        const char *digits = sp->lowercase ? LOWERCASE_HEXDIGITS : UPPERCASE_HEXDIGITS;
         char16_t tmp[32];
         size_t n = 0;
 
@@ -905,6 +908,35 @@ static bool handle_format_specifier(FormatContext *ctx, SpecifierContext *sp) {
         }
 }
 
+static void output_string_safe(EFI_SIMPLE_TEXT_OUTPUT_PROTOCOL *this, const char16_t *s) {
+        assert(this);
+        assert(s);
+
+        /* This is a color-conscious version of ST->ConOut->OutputString(). Whenever it encounters a newline
+         * character, it will reset the color to our default, because some UEFI implementations/terminals
+         * reset the color in that case, and we want our default color to remain in effect */
+
+        int32_t saved_attribute = ST->ConOut->Mode->Attribute;
+        for (;;) {
+                const char16_t *nl = strchr16(s, '\n');
+                if (!nl) /* No further newline */
+                        return (void) ST->ConOut->OutputString(ST->ConOut, (char16_t*) s);
+
+                if (nl[1] == 0) { /* Newline is at the end of the string */
+                        (void) ST->ConOut->OutputString(ST->ConOut, (char16_t*) s);
+                        set_attribute_safe(saved_attribute);
+                        return;
+                }
+
+                /* newline is in the middle of the string */
+                _cleanup_free_ char16_t *x = xstrndup16(s, nl - s + 1);
+                (void) ST->ConOut->OutputString(ST->ConOut, x);
+                set_attribute_safe(saved_attribute);
+
+                s = nl + 1;
+        }
+}
+
 /* printf_internal is largely compatible to userspace vasprintf. Any features omitted should trigger asserts.
  *
  * Supported:
@@ -970,7 +1002,7 @@ _printf_(2, 0) static char16_t *printf_internal(EFI_STATUS status, const char *f
                 return ret_buf;
         }
 
-        ST->ConOut->OutputString(ST->ConOut, ctx.buf);
+        output_string_safe(ST->ConOut, ctx.buf);
 
         return mfree(ctx.dyn_buf);
 }
@@ -1003,6 +1035,7 @@ char16_t *xvasprintf_status(EFI_STATUS status, const char *format, va_list ap) {
 #  undef memcmp
 #  undef memcpy
 #  undef memset
+// NOLINTBEGIN(misc-use-internal-linkage)
 _used_ void *memchr(const void *p, int c, size_t n);
 _used_ int memcmp(const void *p1, const void *p2, size_t n);
 _used_ void *memcpy(void * restrict dest, const void * restrict src, size_t n);

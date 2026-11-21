@@ -2,6 +2,7 @@
 #pragma once
 
 #include <string.h>
+#include <sys/mman.h> /* IWYU pragma: export */
 
 #include "forward.h"
 #include "memory-util-fundamental.h" /* IWYU pragma: export */
@@ -57,12 +58,6 @@ static inline int memcmp_nn(const void *s1, size_t n1, const void *s2, size_t n2
 
 #define zero(x) (memzero(&(x), sizeof(x)))
 
-bool memeqbyte(uint8_t byte, const void *data, size_t length) _nonnull_if_nonzero_(2, 3);
-
-#define memeqzero(data, length) memeqbyte(0x00, data, length)
-
-#define eqzero(x) memeqzero(x, sizeof(x))
-
 static inline void* mempset(void *s, int c, size_t n) {
         memset(s, c, n);
         return (uint8_t*) s + n;
@@ -104,5 +99,15 @@ static inline void erase_char(char *p) {
         explicit_bzero_safe(p, sizeof(char));
 }
 
-/* Makes a copy of the buffer with reversed order of bytes */
-void* memdup_reverse(const void *mem, size_t size);
+#define munmap_safe(p, sz) _munmap_safe(UNIQ_T(P, UNIQ), (p), UNIQ_T(SZ, UNIQ), (sz))
+#define _munmap_safe(_p, p, _sz, sz)                                    \
+        ({                                                              \
+                typeof(p) _p = (p);                                     \
+                if (_p && _p != MAP_FAILED) {                           \
+                        size_t _sz = (sz);                              \
+                        assert(_sz > 0);                                \
+                        assert(_sz != SIZE_MAX); /* catch PAGE_ALIGN() overflows */ \
+                        assert_se(munmap(_p, _sz) >= 0);                \
+                }                                                       \
+                (typeof(p)) NULL;                                       \
+        })

@@ -1,6 +1,8 @@
 /* SPDX-License-Identifier: LGPL-2.1-or-later */
 
+#include "efi-log.h"
 #include "initrd.h"
+#include "iovec-util-fundamental.h"
 #include "proto/device-path.h"
 #include "proto/load-file.h"
 #include "util.h"
@@ -11,8 +13,7 @@
 /* extend LoadFileProtocol */
 struct initrd_loader {
         EFI_LOAD_FILE_PROTOCOL load_file;
-        const void *address;
-        size_t length;
+        struct iovec data;
 };
 
 /* static structure for LINUX_INITRD_MEDIA device path
@@ -52,84 +53,121 @@ static EFIAPI EFI_STATUS initrd_load_file(
                 return EFI_UNSUPPORTED;
 
         loader = (struct initrd_loader *) this;
-
-        if (loader->length == 0 || !loader->address)
+        if (!iovec_is_set(&loader->data))
                 return EFI_NOT_FOUND;
 
-        if (!buffer || *buffer_size < loader->length) {
-                *buffer_size = loader->length;
+        if (!buffer || *buffer_size < loader->data.iov_len) {
+                *buffer_size = loader->data.iov_len;
                 return EFI_BUFFER_TOO_SMALL;
         }
 
-        memcpy(buffer, loader->address, loader->length);
-        *buffer_size = loader->length;
+        memcpy(buffer, loader->data.iov_base, loader->data.iov_len);
+        *buffer_size = loader->data.iov_len;
         return EFI_SUCCESS;
 }
 
 EFI_STATUS initrd_register(
-                const void *initrd_address,
-                size_t initrd_length,
+                const struct iovec *initrd,
                 EFI_HANDLE *ret_initrd_handle) {
 
         EFI_STATUS err;
-        EFI_DEVICE_PATH *dp = (EFI_DEVICE_PATH *) &efi_initrd_device_path;
-        EFI_HANDLE handle;
-        struct initrd_loader *loader;
 
         assert(ret_initrd_handle);
 
-        if (!initrd_address || initrd_length == 0)
+        /* If no initrd is specified we'll not install any. This avoids registration of the protocol for that
+         * case, leaving it open for something else. */
+
+        if (!iovec_is_set(initrd))
                 return EFI_SUCCESS;
 
-        /* check if a LINUX_INITRD_MEDIA_GUID DevicePath is already registered.
-           LocateDevicePath checks for the "closest DevicePath" and returns its handle,
-           where as InstallMultipleProtocolInterfaces only matches identical DevicePaths.
-         */
-        err = BS->LocateDevicePath(MAKE_GUID_PTR(EFI_LOAD_FILE2_PROTOCOL), &dp, &handle);
-        if (err != EFI_NOT_FOUND) /* InitrdMedia is already registered */
-                return EFI_ALREADY_STARTED;
+        /* We want to override the LINUX_INITRD_MEDIA device, let's hence first unregister any existing
+         * one. We don't really expect multiple of these to be registered, but who knows? Let's kill all we
+         * can find. */
+        for (unsigned attempt = 0;; attempt++) {
 
-        loader = xnew(struct initrd_loader, 1);
+                if (attempt >= 16)
+                        return log_debug_status(EFI_DEVICE_ERROR, "Unable to free LINUX_INITRD_MEDIA device path after %u attempts, giving up.", attempt);
+
+                EFI_DEVICE_PATH *dp = (EFI_DEVICE_PATH *) &efi_initrd_device_path;
+                EFI_HANDLE handle = NULL;
+                err = BS->LocateDevicePath(MAKE_GUID_PTR(EFI_LOAD_FILE2_PROTOCOL), &dp, &handle);
+                if (err == EFI_NOT_FOUND) /* Yay! All gone */
+                        break;
+                if (err != EFI_SUCCESS)
+                        return log_debug_status(err, "Failed to locate LINUX_INITRD_MEDIA device: %m");
+
+                /* Get the *actually* installed pointer for the device path */
+                err = BS->HandleProtocol(handle, MAKE_GUID_PTR(EFI_DEVICE_PATH_PROTOCOL), (void**) &dp);
+                if (err != EFI_SUCCESS)
+                        return log_debug_status(err, "Failed to acquire DevicePath protocol on LINUX_INITRD_MEDIA device: %m");
+
+                /* Take away the device path protocol */
+                err = BS->UninstallMultipleProtocolInterfaces(
+                                handle,
+                                MAKE_GUID_PTR(EFI_DEVICE_PATH_PROTOCOL), dp,
+                                /* sentinel= */ NULL);
+                if (err != EFI_SUCCESS)
+                        return log_debug_status(err, "Unable to release DevicePath protocol from old handle: %m");
+
+                /* NB: we leave the handle around (and thus leave the LoadFile2 protocol installed), because
+                 * the owner might be unhappy if we destroy it for them. It will no longer have the device
+                 * path we want to take possession of on it though. The assumption here is that whoever
+                 * registered the device path is OK with the device path being taken away, even if it might
+                 * not be OK with the handle being invalidated as a whole. */
+
+                log_debug("Successfully unregistered previous LINUX_INITRD_MEDIA device.");
+        }
+
+        _cleanup_free_ struct initrd_loader *loader = xnew(struct initrd_loader, 1);
         *loader = (struct initrd_loader) {
                 .load_file.LoadFile = initrd_load_file,
-                .address = initrd_address,
-                .length = initrd_length
+                .data = *initrd,
         };
 
         /* create a new handle and register the LoadFile2 protocol with the InitrdMediaPath on it */
         err = BS->InstallMultipleProtocolInterfaces(
-                        ret_initrd_handle, MAKE_GUID_PTR(EFI_DEVICE_PATH_PROTOCOL),
-                        &efi_initrd_device_path, MAKE_GUID_PTR(EFI_LOAD_FILE2_PROTOCOL),
-                        loader,
-                        NULL);
+                        ret_initrd_handle,
+                        MAKE_GUID_PTR(EFI_DEVICE_PATH_PROTOCOL), &efi_initrd_device_path,
+                        MAKE_GUID_PTR(EFI_LOAD_FILE2_PROTOCOL), loader,
+                        /* sentinel= */ NULL);
         if (err != EFI_SUCCESS)
-                free(loader);
+                return log_debug_status(err, "Failed to install new initrd device: %m");
 
-        return err;
+        log_debug("Installed new initrd of size %zu.", loader->data.iov_len);
+
+        TAKE_PTR(loader);
+        return EFI_SUCCESS;
 }
 
 EFI_STATUS initrd_unregister(EFI_HANDLE initrd_handle) {
-        EFI_STATUS err;
         struct initrd_loader *loader;
+        EFI_STATUS err;
 
         if (!initrd_handle)
                 return EFI_SUCCESS;
 
-        /* get the LoadFile2 protocol that we allocated earlier */
+        /* Get the LoadFile2 protocol that we allocated earlier */
         err = BS->HandleProtocol(initrd_handle, MAKE_GUID_PTR(EFI_LOAD_FILE2_PROTOCOL), (void **) &loader);
         if (err != EFI_SUCCESS)
-                return err;
+                return log_debug_status(err, "Failed to acquire LoadFile2 protocol on our own initrd handle: %m");
 
-        /* uninstall all protocols thus destroying the handle */
+        /* We uninstall the DevicePath and the LoadFile2 protocol in separate steps. That's because we want
+         * to gracefully handle the former (because it's OK if something else takes over the device path),
+         * but be strict on the latter, because that's genuinely ours */
+
+        (void) BS->UninstallMultipleProtocolInterfaces(
+                        initrd_handle,
+                        MAKE_GUID_PTR(EFI_DEVICE_PATH_PROTOCOL), &efi_initrd_device_path,
+                        /* sentinel= */ NULL);
+
+        /* This second call will also invalidate the handle, because it should be the last protocol on the handle */
         err = BS->UninstallMultipleProtocolInterfaces(
-                        initrd_handle, MAKE_GUID_PTR(EFI_DEVICE_PATH_PROTOCOL),
-                        &efi_initrd_device_path, MAKE_GUID_PTR(EFI_LOAD_FILE2_PROTOCOL),
-                        loader,
-                        NULL);
+                        initrd_handle,
+                        MAKE_GUID_PTR(EFI_LOAD_FILE2_PROTOCOL), loader,
+                        /* sentinel= */ NULL);
         if (err != EFI_SUCCESS)
-                return err;
+                return log_debug_status(err, "Failed to uninstall LoadFile2 protocol from our own initrd handle: %m");
 
-        initrd_handle = NULL;
         free(loader);
         return EFI_SUCCESS;
 }
