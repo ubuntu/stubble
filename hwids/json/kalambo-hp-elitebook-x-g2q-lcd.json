@@ -1,7 +1,7 @@
 {
     "type": "devicetree",
     "name": "HP 103C_5336AN HP EliteBook",
-    "compatible": "hp,elitebook-x-g2q",
+    "compatible": "hp,kalambo-elitebook-x-g2q-lcd",
     "hwids": [
         "a8eb125e-80bb-5eb6-a448-8b9a73a9fda4",
         "2111654e-fca0-5191-adf1-a341304be9ac",
