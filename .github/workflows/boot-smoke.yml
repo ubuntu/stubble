@@ -1,0 +1,112 @@
+# Boot a real arm64 Linux kernel through stubble under QEMU + AAVMF.
+
+name: arm64 boot smoke test
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  boot:
+    runs-on: ubuntu-26.04-arm
+    timeout-minutes: 5
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install build and VM dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends \
+            qemu-system-arm qemu-efi-aarch64 ipxe-qemu \
+            dosfstools mtools cpio gzip \
+            python3-pefile python3-pyelftools
+
+      - name: Build stubble.efi
+        run: make -j"$(nproc)"
+
+      - name: Build the tiny initramfs
+        run: |
+          set -euxo pipefail
+          gcc -static -O2 -Wall -Wextra -o init tests/boot-smoke-init.c
+          mkdir -p initrd-root
+          cp init initrd-root/init
+          chmod 755 initrd-root/init
+          (cd initrd-root && find . | cpio --quiet -o -H newc) > initrd.img
+
+      - name: Fetch the newest arm64 kernel from the apt archive
+        run: |
+          set -euxo pipefail
+          # Highest linux-image-unsigned-*-generic in the archive
+          KPKG=$(apt-cache pkgnames \
+            | grep -E '^linux-image-unsigned-[0-9]+\.[0-9]+\.[0-9]+-[0-9]+-generic$' \
+            | sort -V | tail -1)
+          test -n "$KPKG" || { echo "::error::no linux-image-unsigned-*-generic in the archive"; exit 1; }
+          echo "Using kernel package: $KPKG"
+
+          # Download + extract rather than install to skip postinst 
+          apt-get download "$KPKG"
+          DEB=$(ls -1 "${KPKG}"_*.deb | head -1)
+          dpkg-deb -x "$DEB" kernel-pkg
+          VMLINUZ=$(find kernel-pkg/boot -maxdepth 1 -name 'vmlinuz-*' -type f | head -1)
+          test -n "$VMLINUZ" || { echo "::error::no vmlinuz in $KPKG"; exit 1; }
+          cp "$VMLINUZ" vmlinuz.raw
+
+          if gzip -t vmlinuz.raw 2>/dev/null; then
+              gzip -dc vmlinuz.raw > vmlinuz.pe
+              mv vmlinuz.pe vmlinuz.raw
+          fi
+          python3 - <<'PY'
+          import pefile
+          pe = pefile.PE('vmlinuz.raw')
+          assert pe.FILE_HEADER.Machine == 0xAA64, 'not an aarch64 PE kernel'
+          assert pe.OPTIONAL_HEADER.MajorImageVersion >= 1, 'MajorImageVersion < 1 (stubble rejects it)'
+          assert pe.OPTIONAL_HEADER.DATA_DIRECTORY[5].Size == 0, 'kernel has base relocations (stubble rejects it)'
+          print('aarch64 PE kernel OK, SectionAlignment = %#x' % pe.OPTIONAL_HEADER.SectionAlignment)
+          PY
+
+      - name: Build the UKI
+        run: |
+          set -euxo pipefail
+          ./stubblify build \
+            --stub=stubble.efi \
+            --linux=vmlinuz.raw \
+            --initrd=initrd.img \
+            --cmdline='debug console=ttyAMA0 rdinit=/init earlycon=pl011,0x9000000 ignore_loglevel' \
+            --uname=ci-smoke \
+            --efi-arch=aa64 \
+            --output=vmlinuz.efi
+
+      - name: Build the ESP
+        run: |
+          set -euxo pipefail
+          truncate -s 128M esp.img
+          mkfs.vfat -F 32 esp.img
+          mmd -i esp.img ::EFI
+          mmd -i esp.img ::EFI/BOOT
+          mcopy -i esp.img vmlinuz.efi ::EFI/BOOT/BOOTAA64.EFI
+
+      - name: Boot in QEMU / AAVMF
+        run: |
+          set +e
+          set -uxo pipefail
+          cp /usr/share/AAVMF/AAVMF_VARS.fd vars.fd
+          timeout -k 10s 240s qemu-system-aarch64 \
+            -accel tcg \
+            -machine virt -cpu cortex-a57 -m 1024 -smp 1 \
+            -boot menu=on,splash-time=0 \
+            -drive if=pflash,format=raw,readonly=on,file=/usr/share/AAVMF/AAVMF_CODE.fd \
+            -drive if=pflash,format=raw,file=vars.fd \
+            -drive if=none,format=raw,file=esp.img,id=esp \
+            -device virtio-blk-device,drive=esp \
+            -display none -serial stdio -monitor none -no-reboot \
+            2>&1 | tee serial.log
+          rc=${PIPESTATUS[0]}
+          set -e
+
+          grep -q 'STUBBLE_BOOT_OK' serial.log || { echo "::error::missing STUBBLE_BOOT_OK (qemu rc=$rc)"; exit 1; }
+          grep -q 'Linux version' serial.log || { echo "::error::no Linux version banner (qemu rc=$rc)"; exit 1; }
+          if ! grep -q 'earlycon:' serial.log; then
+              echo '::warning::early console did not come up; serial routing may be wrong'
+          fi
+          test "$rc" -eq 0 || { echo "::error::qemu exited with rc=$rc"; exit 1; }
