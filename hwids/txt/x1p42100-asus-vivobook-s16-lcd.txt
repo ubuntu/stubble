@@ -1,0 +1,18 @@
+TYPE    INPUT     CHID
+   1 MFP---BvRr-- f2d8bff1-dd6a-5112-bbd2-055dcfc13120
+   2 M-P---BvRr-- 1748d3f0-e0bb-5d80-b21f-4f4eafdb3123
+   5 MFP--------- 8576477d-8266-57a6-b98c-bc229f7e4071
+   8 M-P-mp------ 1126b191-7fc8-5342-b33c-d130791ebf76
+   9 M-P--------- 340f9225-42fc-5329-8e1b-1506e324a80c
+  10 MF--mp------ 001fc203-742f-5f7a-b22f-f9c4f575b6bf
+  11 MF---------- 160ffb8b-5540-5e3f-8249-482ab4f60aa2
+  12 M---------e- 665276be-80c5-5e5d-929f-fa85d18e2d50
+  13 M---mp------ 9ee2d47b-9126-5b8b-ba6c-b058e5296f55
+  14 M----------- 65605ed1-09e2-57aa-bd0f-a26c1d35433f
+ext0 MFP--------E 1069d9c5-e153-50a9-8997-5add2d6e9400
+ext1 MF---------E 1668ac07-eb3f-57ea-a1b4-90679429f6a6
+
+LEGEND: M → manufacturer (ASUSTeK COMPUTER INC.) ┄ F → family (ASUS Vivobook S 16) ┄ P → product-name (ASUS Vivobook S 16 S3607QA_S3607QA)
+        S → product-sku (n/a) ┄ m → baseboard-manufacturer (ASUSTeK COMPUTER INC.)
+        p → baseboard-product (S3607QA) ┄ B → bios-vendor (Insyde) ┄ v → bios-version (S3607QA.311)
+        R → bios-major (01) ┄ r → bios-minor (1b) ┄ e → enclosure-type (a) ┄ E → edid-panel (BOE0d25)
