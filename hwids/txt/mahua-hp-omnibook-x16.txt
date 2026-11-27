@@ -1,0 +1,23 @@
+TYPE    INPUT     CHID
+   0 MFPS--BvRr-- 181273ec-3ffe-5626-b332-8a93f82ff672
+   1 MFP---BvRr-- a5d67507-fcd1-5c31-ab2b-6ad3c850b097
+   2 M-P---BvRr-- a2730516-bdb9-540e-b4ab-2e3e473a2d91
+   3 MFPSmp------ 5ecfd33f-1a5f-582b-9e2f-6f16a0f14c83
+   4 MFPS-------- cbf4ec2e-8666-5974-bffe-313edaa444f1
+   5 MFP--------- e30110b2-17f9-5131-9501-00f2da51ddc1
+   6 M--Smp------ 7529c454-bd6a-57c1-8f6f-cefcc2368a5e
+   7 M--S-------- 1ba2a030-48f3-54d4-87e9-1b4eacc553a4
+   8 M-P-mp------ db1ae729-3836-5026-8e09-65a45fe0703e
+   9 M-P--------- f3b8372b-39a6-50f5-b242-eddf7422c318
+  10 MF--mp------ aa949864-0304-5cec-9104-57c85b68875a
+  11 MF---------- 5d43face-6ba8-5d41-8914-12f3410bbcf9
+  13 M---mp------ 9c4d99de-ba59-506d-a7b5-ffb5b3615f8a
+  14 M----------- 93f84748-c854-5d6b-b78a-13c2361e0758
+ext0 MFP--------E 420a8740-e9e6-54f5-9df4-2adc4d784406
+ext1 MF---------E 167ae9ba-ca8a-55aa-a7f4-50dc014bc932
+ext2 M--S-------E 5d83f98f-615c-5b02-b505-0f1c59266d43
+
+LEGEND: M → manufacturer (HP) ┄ F → family (103C_5335M8 HP OmniBook X) ┄ P → product-name (HP OmniBook X Laptop 16-cp1xxx)
+        S → product-sku (D3LN7UA#ABA) ┄ m → baseboard-manufacturer (HP)
+        p → baseboard-product (8F46) ┄ B → bios-vendor (Qualcomm Technologies Inc., Insyde Inc.) ┄ v → bios-version (F.04)
+        R → bios-major (0f) ┄ r → bios-minor (04) ┄ e → enclosure-type (n/a) ┄ E → edid-panel (SDC4214)
