@@ -1,0 +1,24 @@
+TYPE    INPUT     CHID
+   0 MFPS--BvRr-- 8b9dc4ba-a93e-5189-aa04-6805c6fd735f
+   1 MFP---BvRr-- abd888a9-990c-5a66-8f50-3344e7c76fcf
+   2 M-P---BvRr-- 00788fb3-dbe8-5954-94d2-3dd9cddbd7f6
+   3 MFPSmp------ dd65a519-9cb1-5fb1-acb9-f8b914368f6a
+   4 MFPS-------- 430ccde2-3c1b-5a09-9874-d582fda39c19
+   5 MFP--------- 823bcf3d-2b07-55bc-92ad-bf9e8c033f40
+   6 M--Smp------ daa59d3d-14d0-55d9-840c-a80d34b26ba2
+   7 M--S-------- 9625cffd-3b14-56dc-aa6f-c768e6dbf160
+   8 M-P-mp------ 18ac5b4c-3598-5199-a1ae-954b0e3b3efc
+   9 M-P--------- 00d64345-2d46-58ca-aaa0-032613b7b8cd
+  10 MF--mp------ 5bc6b3ba-200a-5943-9609-fad249299ada
+  11 MF---------- e443e193-ae25-5084-92d5-77b830486278
+  12 M---------e- 92dcc94d-48f7-5ee8-b9ec-a6393fb7a484
+  13 M---mp------ 807d3810-7703-5b12-be96-8018e1aa5cf9
+  14 M----------- 1e301734-5d49-5df4-9ed2-aa1c0a9dddda
+ext0 MFP--------E 4573a934-1c4c-5ae5-a2d8-74767cb36cfe
+ext1 MF---------E 8211f8a7-faf0-551c-bfc1-67afc33f1316
+ext2 M--S-------E f41166e5-4a0b-52b0-96b4-2287203709aa
+
+LEGEND: M → manufacturer (Acer) ┄ F → family (Aspire 14 AI) ┄ P → product-name (Aspire A14-11M)
+        S → product-sku (0000000000000000) ┄ m → baseboard-manufacturer (SX1)
+        p → baseboard-product (Tiguan_SX1) ┄ B → bios-vendor (Insyde Corp.) ┄ v → bios-version (V1.10)
+        R → bios-major (00) ┄ r → bios-minor (00) ┄ e → enclosure-type (a) ┄ E → edid-panel (CSW1458)
