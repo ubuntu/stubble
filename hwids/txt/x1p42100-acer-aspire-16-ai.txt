@@ -1,0 +1,24 @@
+TYPE    INPUT     CHID
+   0 MFPS--BvRr-- dbc9553e-59eb-533b-9cd4-19a066dd752c
+   1 MFP---BvRr-- 7023b088-10f4-5d23-a872-c917abbc547a
+   2 M-P---BvRr-- 2fb277a4-f628-5132-a7e0-bedad05a9d16
+   3 MFPSmp------ 5ec0bc4a-e869-5a86-8b9d-4e0d3f2fb772
+   4 MFPS-------- 6ef0d296-7047-5fab-a02c-be32249e15b9
+   5 MFP--------- d3d98724-7f99-58d6-8f91-bcaffe9974e7
+   6 M--Smp------ 83fc9383-239f-5dca-a720-e9248d9701fb
+   7 M--S-------- 9625cffd-3b14-56dc-aa6f-c768e6dbf160
+   8 M-P-mp------ a4f0baa5-52dd-5d58-9046-3b5d678417f4
+   9 M-P--------- 82414d70-10f6-5a97-beab-dd51d1bcf49f
+  10 MF--mp------ 427c626c-b3ad-577a-ac5b-241e599600ca
+  11 MF---------- 2cbcdb24-25ec-51da-829a-05c8df55f201
+  12 M---------e- 92dcc94d-48f7-5ee8-b9ec-a6393fb7a484
+  13 M---mp------ 7c78c197-19db-53e2-b774-faf8b47f6498
+  14 M----------- 1e301734-5d49-5df4-9ed2-aa1c0a9dddda
+ext0 MFP--------E 97e7cc8c-2530-5b3c-b2d6-3d7d3171b290
+ext1 MF---------E 2cf3330a-bf90-5d24-b93a-114a3e9df031
+ext2 M--S-------E 0a516b7b-15ef-5e3d-8f18-6df5a958691f
+
+LEGEND: M → manufacturer (Acer) ┄ F → family (Aspire 16 AI) ┄ P → product-name (Aspire A16-11M)
+        S → product-sku (0000000000000000) ┄ m → baseboard-manufacturer (SX1)
+        p → baseboard-product (Venue_SX1) ┄ B → bios-vendor (Insyde Corp.) ┄ v → bios-version (V1.09)
+        R → bios-major (00) ┄ r → bios-minor (00) ┄ e → enclosure-type (a) ┄ E → edid-panel (CSW1666)
