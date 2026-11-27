@@ -16,7 +16,7 @@ def collect_compats(jsondir: Path):
 
             # Having FIXME! as compatible is probably an error
             if j['compatible'] == 'FIXME!':
-                print("warning: {} contains \"compatible: FIXME!\"".format(json_file));
+                print("warning: {} contains \"compatible: FIXME!\"".format(json_file), file=sys.stderr)
 
             compats.append(j['compatible'])
     return compats
