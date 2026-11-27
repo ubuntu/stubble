@@ -1,0 +1,18 @@
+{
+    "type": "devicetree",
+    "name": "SpacemiT K3 CoM260 TQ",
+    "compatible": "spacemit,k3-com260-tq",
+    "hwids": [
+        "0cf6be0f-e73c-56a6-9f7b-90ac51c516da",
+        "1629a609-6603-5242-a755-797625f84685",
+        "ef6b6799-7c20-5319-a8bb-8ddd51ac2c38",
+        "ab8b7d55-e499-58cb-97d8-e2a6d1ff7ade",
+        "a0984b1d-d0d6-567a-9b11-d72d92a8cb34",
+        "e4d39de5-0726-5452-b5ba-1a797eb40679",
+        "571c2b6c-092e-55a2-a16d-4c0ac54a25e0",
+        "00a02b12-5411-5b63-844a-92b7635669c1",
+        "55f91f93-a212-500c-b944-00a1bfb17530",
+        "33b2e8d7-4826-5c46-b018-376cf7c4b3c8",
+        "aa34fba7-3217-5fec-9b75-391f436e95c5"
+    ]
+}
