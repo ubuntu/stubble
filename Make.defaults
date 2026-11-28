@@ -9,7 +9,7 @@ endif
 CFLAGS += -mstack-protector-guard=global
 CFLAGS += -DCOLOR_NORMAL=0x0f
 CFLAGS += -fno-lto
-CFLAGS += '-DEFI_MACHINE_TYPE_NAME="x64"'
+CFLAGS += '-DEFI_MACHINE_TYPE_NAME="$(EFI_ARCH)"'
 CFLAGS += '-DGIT_VERSION="1.0-ubuntu0"'
 CFLAGS += -O2
 
