@@ -3,14 +3,17 @@
     "name": "Radxa Computer Co., Ltd. Dragon Q8B",
     "compatible": "radxa,dragon-q8b",
     "hwids": [
-        "32978e78-153f-5ce0-a6c7-05332e9be35b",
+        "8c59787d-f7e8-5b0b-9c24-ae80a8dd2b82",
+        "4a50a4f5-a77d-5c41-88a7-4c00a0cd36b9",
+        "0b6c7624-bd5e-558b-8771-6a8fd2a35974",
+        "2e452ec2-59f9-55e0-b749-36e2dd52889a",
         "93975fa3-a84a-5a58-a065-1de7e0bcf58f",
         "616a4751-7393-5af2-9d86-bd0830b2879c",
-        "72cee887-e3b7-569a-b301-a6c60ce4fe94",
+        "84980935-f63d-5462-ba69-68a1a6cd2da8",
         "e12e80ad-d8a6-57e1-be79-ec1bc76f96e5",
-        "6f487192-b176-566b-b165-3a56ff779c1a",
+        "5359ffc7-3d6a-559d-a76f-5f7a1e945cea",
         "0892d6ad-c297-548b-813b-d3ade091f75a",
-        "fc3f2e5b-9d50-5e13-9002-b9765dcc78e5",
+        "ad855968-1eb1-57e0-97ec-c19dcd19be1a",
         "67ae360a-59f4-5f6a-9100-15270232f899",
         "5c83a423-e471-5160-be87-bf824c48b38c"
     ]
